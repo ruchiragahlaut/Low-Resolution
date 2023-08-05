@@ -1,0 +1,41 @@
+{
+  "files.autoSave": "afterDelay",
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "editor.fontSize": 18,
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+  "editor.renderWhitespace": "boundary",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "editor.rulers": [
+    80
+  ],
+  "editor.minimap.maxColumn": 80,
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.scale": 2,
+  "editor.minimap.size": "proportional",
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+  "liveServer.settings.NoBrowser": true,
+  "notebook.cellToolbarLocation": {
+    "default": "left"
+  },
+  "notebook.compactView": false,
+  "notebook.formatOnCellExecution": false,
+  "notebook.formatOnSave.enabled": false,
+  "notebook.lineNumbers": "on",
+  "notebook.markup.fontSize": 12,
+  "python.analysis.autoFormatStrings": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.useLibraryCodeForTypes": true,
+  "python.terminal.activateEnvironment": false,
+  "[python]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnPaste": false,
+    "editor.wordBasedSuggestions": false
+  },
+  "notebook.output.scrolling": true,
+}
