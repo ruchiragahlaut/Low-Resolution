@@ -15,7 +15,7 @@ export default function IndexPage() {
   const { setImage, setFile, setSize } = useContext(DetectContext);
 
   const [error, setError] = useState(false);
-  const [errMessage, setErrMessage] = useState("");
+  const [message, setMessage] = useState("Please upload an image of an object for classification.");
 
   const fileInputRef = useRef(null);
 
@@ -29,7 +29,7 @@ export default function IndexPage() {
       if (allowedFileTypes.includes(fileExtension)) {
         if (fileType.startsWith("image/")) {
           setError(false);
-          setErrMessage("");
+          setMessage("Please upload an image of an object for classification.");
 
           const reader = new FileReader();
           reader.readAsDataURL(file);
@@ -37,7 +37,7 @@ export default function IndexPage() {
             const base64String = reader.result;
 
             setImage(base64String);
-            setFile(file);
+            setFile(file.name);
             setSize(file.size);
 
             navigate("/detect");
@@ -45,11 +45,11 @@ export default function IndexPage() {
 
         } else {
           setError(true);
-          setErrMessage("Uploaded file is not an image. Please upload an image.");
+          setMessage("Uploaded file is not an image. Please upload an image.");
         }
       } else {
         setError(true);
-        setErrMessage("File type not supported. Please upload supported file types only.");
+        setMessage("File type not supported. Please upload supported file types only.");
       }
     }
   }
@@ -63,8 +63,8 @@ export default function IndexPage() {
   });
 
   return <>
-    <Grid container gap={4} paddingY={10}>
-      <Grid item container xs={12} component={Paper} style={styles}>
+    <Grid container gap={4} paddingY={2}>
+      <Grid item xs={12} container component={Paper} style={styles}>
         <Grid item xs={10}>
           Drag and drop an image here
           <br />
@@ -73,7 +73,7 @@ export default function IndexPage() {
             Allowed file types: {allowedFileTypes.join(", ")}
           </Box>
         </Grid>
-        <Grid xs={2}>
+        <Grid item xs={2}>
           <Button variant="contained" component="label">
             <input
               type="file"
@@ -88,7 +88,7 @@ export default function IndexPage() {
 
       <Grid item xs={12}>
         <Alert severity={error ? "error" : "info"}>
-          {error ? errMessage : "Please upload an image of an object for classification."}
+          {message}
         </Alert>
       </Grid>
     </Grid>
