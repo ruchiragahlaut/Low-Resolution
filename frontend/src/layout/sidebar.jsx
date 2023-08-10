@@ -44,18 +44,19 @@ export default function Sidebar() {
         alignItems: "center",
         padding: 2
       }}>
-        <img src={logo} alt="INS Valsura Logo" style={{ width: 180, height: "auto", aspectRatio: 1 }} />
+        <img src={logo} alt="Logo" style={{ width: 180, height: "auto", aspectRatio: 1 }} />
       </div>
 
       {Object.keys(sidebarItems).map((key) => {
         return <Button
           key={key}
-          variant={path === key ? "contained" : "outlined"}
+          color={path === sidebarItems[key].url ? "secondary" : "primary"}
+          variant="contained"
           onClick={() => navigate(sidebarItems[key].url)}
         >
           {sidebarItems[key].text}
         </Button>
       })}
-    </Box>
+    </Box >
   </>;
 }
