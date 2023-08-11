@@ -10,7 +10,7 @@ npm install
 cd frontend && npm install
 ```
 
-### Deploy in development using
+### Deploy (development) using
 ```
 npm start
 
@@ -18,7 +18,7 @@ npm start
 cd frontend && npm start
 ```
 
-### Deploy in production using
+### Deploy (production) using
 ```
 npm run build
 
@@ -32,7 +32,8 @@ Above command will export entire react app as static files to /server/static fol
 See [./frontend/.env](./frontend/.env) for configuration options
 
 ## Backend (Django, Python)
-### Deploy in development using
+
+### Deploy (development) using
 ```
 python manage.py runserver
 

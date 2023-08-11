@@ -16,6 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from django.http import HttpResponseRedirect
+from django.conf import settings
+
 urlpatterns = [
+    # Client site (static), redirect ROOT_URL to the same
+    path('', lambda req: HttpResponseRedirect(settings.STATIC_URL + "index.html")),
+
+    # Admin site
     path('admin/', admin.site.urls),
 ]
