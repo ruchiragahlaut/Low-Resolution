@@ -3,24 +3,26 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 const defaultTheme = createTheme({
   palette: {
+    primary: {
+      main: "#FAFAFABB"
+    },
     secondary: {
-      main: "#33AA5599",
+      main: "#33AA5599"
     },
     background: {
-      paper: "#FAFAFA99",
-      // paper: "#AFAFAF66",
+      paper: "#D9D9D9BB"
     },
     error: {
-      main: "#FF0000EE",
+      main: "#FF0000"
     },
     warning: {
-      main: "#FFFF00EE",
+      main: "#FFFF00"
     },
     info: {
-      main: "#0000FFEE",
+      main: "#0000FF"
     },
     success: {
-      main: "#00FF00EE",
+      main: "#00FF00"
     },
   },
   shape: {
