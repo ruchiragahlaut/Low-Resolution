@@ -1,4 +1,5 @@
 import { Grid, Box } from "@mui/material";
+import { useContext } from "react";
 
 import ThemeProvider from "./theme";
 import RouterProvider from "./router";
@@ -7,9 +8,13 @@ import ContextProvider from "./context";
 import Header from "../layout/header";
 import Sidebar from "../layout/sidebar";
 
+import { AuthContext } from "../base/context";
+
 import bgimage from "../background.jpg"
 
 export default function BaseTemplate({ children }) {
+  const { token } = useContext(AuthContext);
+
   return <>
     <ThemeProvider>
       <ContextProvider>

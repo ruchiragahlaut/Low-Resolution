@@ -2,7 +2,6 @@ import { Toolbar, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
 
 const headerTitles = {
-  "": "Low Resolution Image Classification",
   "/detect": "Low Resolution Image Classification",
   "/batch": "Batch Classification",
   "/train": "Retrain Model",

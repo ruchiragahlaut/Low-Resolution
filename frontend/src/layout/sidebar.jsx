@@ -1,5 +1,8 @@
 import { Box, Paper, Button } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+
+import { AuthContext } from "../base/context";
 
 import logo from "../logo.png"
 
@@ -25,6 +28,11 @@ const sidebarItems = {
 export default function Sidebar() {
   const path = useLocation().pathname;
   const navigate = useNavigate();
+  const { token } = useContext(AuthContext);
+
+  if (!token) {
+    return null;
+  }
 
   return <>
     <Box

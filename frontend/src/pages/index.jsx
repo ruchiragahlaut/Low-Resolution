@@ -18,13 +18,19 @@ export default function IndexPage() {
   const [message, setMessage] = useState("Please upload an image of an object for classification.");
 
   const fileInputRef = useRef(null);
+  const dragAndDropRef = useRef(null);
 
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
+    e.preventDefault();
+
+    // Drag and drop or input type file
+    const file = (e.dataTransfer ?? e.target)?.files[0];
     if (file) {
       const fileType = file.type;
       const fileName = file.name;
-      const fileExtension = fileName.substring(fileName.lastIndexOf("."), fileName.length).toLowerCase();
+      const fileExtension = fileName
+        .substring(fileName.lastIndexOf("."), fileName.length)
+        .toLowerCase();
 
       if (allowedFileTypes.includes(fileExtension)) {
         if (fileType.startsWith("image/")) {
@@ -55,16 +61,24 @@ export default function IndexPage() {
   }
 
   useEffect(() => {
-    const fileInput = fileInputRef.current;
+    const fileInput = fileInputRef?.current;
+    const dragAndDrop = dragAndDropRef?.current;
     fileInput.addEventListener("change", handleFileChange);
+    dragAndDrop.addEventListener("drop", handleFileChange);
     return () => {
       fileInput.removeEventListener("change", handleFileChange);
+      dragAndDrop.removeEventListener("drop", handleFileChange);
     }
   });
 
   return <>
     <Grid container gap={4} paddingY={2}>
-      <Grid item xs={12} container component={Paper} style={styles}>
+      <Grid
+        item xs={12}
+        container component={Paper} style={styles}
+        ref={dragAndDropRef}
+        onDragOver={e => e.preventDefault()}
+      >
         <Grid item xs={10}>
           Drag and drop an image here
           <br />
@@ -81,7 +95,7 @@ export default function IndexPage() {
               accept="image/*"
               hidden
             />
-            Browse Images
+            Browse Image
           </Button>
         </Grid>
       </Grid>

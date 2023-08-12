@@ -22,7 +22,7 @@ export default function DetectPage() {
     return <Navigate to="/" />;
 
   return <>
-    <Grid container rowGap={2} columnGap={4} paddingY={6}>
+    <Grid container rowGap={2} columnGap={4} paddingY={2}>
       <Grid item xs={8} container gap={4}>
         <Box
           style={{
