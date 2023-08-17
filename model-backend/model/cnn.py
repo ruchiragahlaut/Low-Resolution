@@ -23,4 +23,3 @@ def CNN(shape1, shape2, shape3, nbClasses):
     model.compile(loss='categorical_crossentropy', metrics=['accuracy'], optimizer='adam')
     model.summary()
     return model
-
