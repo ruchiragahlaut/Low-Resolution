@@ -10,9 +10,7 @@
   "editor.renderWhitespace": "boundary",
   "files.insertFinalNewline": true,
   "files.trimFinalNewlines": true,
-  "editor.rulers": [
-    80
-  ],
+  "editor.rulers": [80],
   "editor.minimap.maxColumn": 80,
   "editor.minimap.renderCharacters": false,
   "editor.minimap.scale": 2,
@@ -38,4 +36,5 @@
     "editor.wordBasedSuggestions": false
   },
   "notebook.output.scrolling": true,
+  "githubPullRequests.ignoredPullRequestBranches": ["main"]
 }
