@@ -36,5 +36,6 @@
     "editor.wordBasedSuggestions": false
   },
   "notebook.output.scrolling": true,
-  "githubPullRequests.ignoredPullRequestBranches": ["main"]
+  "githubPullRequests.ignoredPullRequestBranches": ["main"],
+  "editor.acceptSuggestionOnEnter": "on"
 }
