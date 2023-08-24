@@ -1,0 +1,11 @@
+{
+  "baseurl": "http://localhost:8000/api/",
+  "auth": {
+    "session": {
+      "new": "auth/session/new/",
+      "login": "auth/session/login/",
+      "validate": "auth/session/validate/",
+      "logout": "auth/session/logout/"
+    }
+  }
+}

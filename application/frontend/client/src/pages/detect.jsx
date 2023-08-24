@@ -5,7 +5,7 @@ import {
 import { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
-import { DetectContext } from "../base/context";
+import { DetectContext } from "../base/contexts/detect";
 
 const styles = {
   padding: 12

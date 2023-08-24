@@ -2,7 +2,7 @@ import { Grid, Box, Paper, Button, Alert } from "@mui/material";
 import { useState, useRef, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { DetectContext } from "../base/context";
+import { DetectContext } from "../base/contexts/detect";
 
 const styles = {
   padding: 16,

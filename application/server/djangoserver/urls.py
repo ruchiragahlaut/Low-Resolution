@@ -14,19 +14,51 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from django.contrib import admin
+from django.contrib.sessions.models import Session
 
-from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 
+# Redirect ROOT_URL to the client site
+CLIENT_SITE_URL = settings.STATIC_URL + "client/index.html"
+def index(request):
+    """
+    Redirect request at ROOT_URL to the client site by default.
+    """
+    return HttpResponseRedirect(CLIENT_SITE_URL)
+
+@ensure_csrf_cookie
+def new_session(request):
+    """
+    Create new session for client.
+    """
+    return HttpResponse(status=200)
+
+def validate_session(request):
+    """
+    Validate session so that only HTTP requests with valid sessionid
+    can access the API endpoints.
+    """
+    sessionid = request.COOKIES.get("sessionid")
+    if sessionid is None:
+        return HttpResponse(status=401)
+    try:
+        session = Session.objects.get(session_key=sessionid)
+    except Session.DoesNotExist:
+        return HttpResponse(status=401)
+    return HttpResponse(status=201)
+
 urlpatterns = [
-    # Client site (static), redirect ROOT_URL to the same
-    path('', lambda req: HttpResponseRedirect(settings.STATIC_URL + "client/index.html")),
+    path(r'', index),
 
     # API Endpoints
-    path('api/', include('api.urls')),
+    path(r'api/auth/session/', include('rest_framework.urls')),
+    path(r'api/auth/session/new/', new_session),
+    path(r'api/auth/session/validate/', validate_session),
 
-    # Django Admin
-    path('admin/', admin.site.urls),
+    # Django Administration
+    path(r'admin/', admin.site.urls),
 ]

@@ -1,0 +1,18 @@
+[
+  {
+    "pageURL": "/detect",
+    "buttonText": "Detect"
+  },
+  {
+    "pageURL": "/batch",
+    "buttonText": "Batch Classification"
+  },
+  {
+    "pageURL": "/train",
+    "buttonText": "Train"
+  },
+  {
+    "pageURL": "/database",
+    "buttonText": "Database"
+  }
+]
