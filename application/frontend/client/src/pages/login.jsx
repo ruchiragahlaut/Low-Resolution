@@ -17,6 +17,9 @@ export default function LoginPage() {
   const [Password, setPassword] = useState(null);
 
   function updateCSRF() {
+    // Clear cookie
+    document.cookie = `csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${endpoints.domain}`;
+
     const URL = endpoints.baseurl + endpoints.auth.session.new;
     axios.get(URL, { withCredentials: true }).then(res => {
       setCSRFtoken(getCookie("csrftoken"));
@@ -42,7 +45,7 @@ export default function LoginPage() {
     payload.append("username", Username);
     payload.append("password", Password);
     payload.append("csrfmiddlewaretoken", CSRFtoken);
-    payload.append("next", endpoints.baseurl + endpoints.auth.session.validate);
+    payload.append("next", endpoints.auth.session.validate);
     const config = {
       withCredentials: true,
       headers: {

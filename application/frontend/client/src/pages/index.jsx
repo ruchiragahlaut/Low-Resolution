@@ -1,8 +1,9 @@
 import { Grid, Box, Paper, Button, Alert } from "@mui/material";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { DetectContext } from "../base/contexts/detect";
+import Protected from "../layout/protected";
 
 const styles = {
   padding: 16
@@ -11,13 +12,12 @@ const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff"];
 
 export default function IndexPage() {
   const navigate = useNavigate();
-  const { setImage, setFile, setSize } = useContext(DetectContext);
+  const {
+    setImagebase64, setFilename, setBytessize
+  } = useContext(DetectContext);
 
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("Please upload an image of an object for classification.");
-
-  const fileInputRef = useRef(null);
-  const dragAndDropRef = useRef(null);
 
   const handleFileChange = (e) => {
     e.preventDefault();
@@ -41,9 +41,9 @@ export default function IndexPage() {
           reader.onload = () => {
             const base64String = reader.result;
 
-            setImage(base64String);
-            setFile(file.name);
-            setSize(file.size);
+            setImagebase64(base64String);
+            setFilename(file.name);
+            setBytessize(file.size);
 
             navigate("/detect");
           }
@@ -59,24 +59,13 @@ export default function IndexPage() {
     }
   }
 
-  useEffect(() => {
-    const fileInput = fileInputRef?.current;
-    const dragAndDrop = dragAndDropRef?.current;
-    fileInput.addEventListener("change", handleFileChange);
-    dragAndDrop.addEventListener("drop", handleFileChange);
-    return () => {
-      fileInput.removeEventListener("change", handleFileChange);
-      dragAndDrop.removeEventListener("drop", handleFileChange);
-    }
-  });
-
-  return <>
+  return <Protected>
     <Grid container gap={4} paddingY={2}>
       <Grid
         item xs={12}
         container component={Paper} style={styles}
-        ref={dragAndDropRef}
         onDragOver={e => e.preventDefault()}
+        onDrop={handleFileChange}
       >
         <Grid item xs={10}>
           Drag and drop an image here
@@ -90,7 +79,7 @@ export default function IndexPage() {
           <Button variant="contained" component="label">
             <input
               type="file"
-              ref={fileInputRef}
+              onChange={handleFileChange}
               accept="image/*"
               hidden
             />
@@ -105,5 +94,5 @@ export default function IndexPage() {
         </Alert>
       </Grid>
     </Grid>
-  </>;
+  </Protected>;
 }

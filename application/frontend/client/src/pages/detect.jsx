@@ -6,6 +6,7 @@ import { useContext, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 
 import { DetectContext } from "../base/contexts/detect";
+import Protected from "../layout/protected";
 
 const styles = {
   padding: 12
@@ -14,14 +15,14 @@ const styles = {
 export default function DetectPage() {
   const navigate = useNavigate();
 
-  const { image, file, size } = useContext(DetectContext);
+  const { Imagebase64, Filename, Bytessize } = useContext(DetectContext);
 
   const [threshold, setThreshold] = useState(50);
 
-  if (!image)
+  if (!Imagebase64)
     return <Navigate to="/" />;
 
-  return <>
+  return <Protected>
     <Grid container rowGap={2} columnGap={4} paddingY={2}>
       <Grid item xs={8} container gap={4}>
         <Box
@@ -35,12 +36,12 @@ export default function DetectPage() {
               <br />
               <br />
               <Box component={Paper} style={{ ...styles, width: "max-content" }}>
-                {file} - {
-                  (size > 1024 * 1024) ?
-                    `${(size / 1024 / 1024).toFixed(2)} MiB`
-                    : (size > 1024) ?
-                      `${(size / 1024).toFixed(2)} KiB`
-                      : `${size} Bytes`
+                {Filename} - {
+                  (Bytessize > 1024 * 1024) ?
+                    `${(Bytessize / 1024 / 1024).toFixed(2)} MiB`
+                    : (Bytessize > 1024) ?
+                      `${(Bytessize / 1024).toFixed(2)} KiB`
+                      : `${Bytessize} Bytes`
                 }
               </Box>
             </Grid>
@@ -59,7 +60,7 @@ export default function DetectPage() {
 
       <Grid item xs={3} component={Paper} style={styles}>
         <img
-          src={image}
+          src={Imagebase64}
           alt="Uploaded"
           style={{
             width: "100%",
@@ -100,5 +101,5 @@ export default function DetectPage() {
       </Grid>
 
     </Grid >
-  </>;
+  </Protected>;
 }

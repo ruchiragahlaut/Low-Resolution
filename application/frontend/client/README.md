@@ -1,20 +1,15 @@
 # Low-resolution image classification
 
-## Temporary files
-
-```
-(application/frontend/client)
-\-- node_modules: node dependencies (ignored in git)
-```
-
 ## Setup instructions
 
-> Requires node
+> Requires NodeJS and NPM
 
 ### Install dependencies
 
 ```bash
 npm install
+# OR
+npm i
 ```
 
 ### Run development server

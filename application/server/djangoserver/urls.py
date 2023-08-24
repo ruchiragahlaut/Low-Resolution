@@ -18,9 +18,12 @@ from django.urls import path, include
 from django.contrib import admin
 from django.contrib.sessions.models import Session
 
+from django.views.static import serve
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
+
+from database import views as database_views
 
 # Redirect ROOT_URL to the client site
 CLIENT_SITE_URL = settings.STATIC_URL + "client/index.html"
@@ -53,11 +56,24 @@ def validate_session(request):
 
 urlpatterns = [
     path(r'', index),
+    path(r'media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
 
     # API Endpoints
     path(r'api/auth/session/', include('rest_framework.urls')),
     path(r'api/auth/session/new/', new_session),
     path(r'api/auth/session/validate/', validate_session),
+
+    path(r'api/db/', database_views.AlbumViewSet.as_view({'get': 'list'})),
+    path(r'api/db/create/', database_views.AlbumViewSet.as_view({'post': 'create'})),
+    path(r'api/db/<int:pk>/', database_views.AlbumViewSet.as_view({'get': 'retrieve'})),
+    path(r'api/db/<int:pk>/update/', database_views.AlbumViewSet.as_view({'put': 'update'})),
+    path(r'api/db/<int:pk>/delete/', database_views.AlbumViewSet.as_view({'delete': 'destroy'})),
+
+    path(r'api/db/images/', database_views.AlbumImageViewSet.as_view({'get': 'list'})),
+    path(r'api/db/images/create/', database_views.AlbumImageViewSet.as_view({'post': 'create'})),
+    path(r'api/db/images/<int:pk>/', database_views.AlbumImageViewSet.as_view({'get': 'retrieve'})),
+    path(r'api/db/images/<int:pk>/update/', database_views.AlbumImageViewSet.as_view({'put': 'update'})),
+    path(r'api/db/images/<int:pk>/delete/', database_views.AlbumImageViewSet.as_view({'delete': 'destroy'})),
 
     # Django Administration
     path(r'admin/', admin.site.urls),

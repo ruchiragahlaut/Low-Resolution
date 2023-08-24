@@ -14,5 +14,9 @@
   {
     "pageURL": "/database",
     "buttonText": "Database"
+  },
+  {
+    "pageURL": "/logout",
+    "buttonText": "Logout"
   }
 ]
