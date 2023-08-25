@@ -1,0 +1,16 @@
+name: Run Specific File
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run specific file
+        run: python model-backend\test.py
+        if: ${{ github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'train-model') }}

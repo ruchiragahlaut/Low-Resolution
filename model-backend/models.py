@@ -114,7 +114,7 @@ class ImageClassifier(Mask):
 def model_selector(X, y):
   # Create multiple models
   models = []
-  for model_type in ['extra_trees', 'svm', 'xgb']:
+  for model_type in ['extra_trees']:
       models.append(ImageClassifier(model_type=model_type))
   # Train models on data
   accuracies = []
