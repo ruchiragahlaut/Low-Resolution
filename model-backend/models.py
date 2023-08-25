@@ -98,11 +98,11 @@ class ImageClassifier(Mask):
         # Split data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
         # Preprocess training data
-        X_train = self.preprocess_images(X_train)
+        
         # Train model on preprocessed data
         self.model.fit(X_train, y_train)
         # Preprocess testing data
-        X_test = self.preprocess_images(X_test)
+        
         # Evaluate model on testing data
         y_pred = self.model.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
@@ -115,14 +115,13 @@ def model_selector(X, y):
   # Create multiple models
   models = []
   for model_type in ['extra_trees', 'svm', 'xgb']:
-    for mask_type in Mask.masks.keys():
-      for mask_size in [3, 5]:
-        models.append(ImageClassifier(model_type=model_type, mask_type=mask_type, mask_size=mask_size))
+      models.append(ImageClassifier(model_type=model_type))
   # Train models on data
   accuracies = []
   for model in models:
     accuracy, _, _ = model.train_model(X, y)
     accuracies.append(accuracy)
+  print(accuracies)
   # Choose top 5 models based on accuracy
   top_models = [models[i] for i in np.argsort(accuracies)[-5:]]
   # Combine models using voting classifier
