@@ -11,10 +11,10 @@ import pickle
 import os
 img = []
 classes = []
-
-for i in os.listdir('Data'):
-    for j in os.listdir('Data/'+i):
-        temp = cv2.imread('Data/'+i+'/'+j)
+PATH= 'model-backend/Data/'
+for i in os.listdir(PATH):
+    for j in os.listdir(PATH+i):
+        temp = cv2.imread(PATH+i+'/'+j)
         #convert to gray scale
         temp = cv2.cvtColor(temp, cv2.COLOR_BGR2GRAY) 
         # apply digital filter
