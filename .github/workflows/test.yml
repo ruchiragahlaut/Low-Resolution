@@ -25,13 +25,28 @@ jobs:
       - name: Run specific file
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" && "${{ github.event.head_commit.message }}" == *"train-model"* ]]; then
-            python model-backend/test.py
+            python model-backend/test.py > logs.txt
+            cat logs.txt
+            echo "Execution completed."
+
           else
             echo "Skipping execution as conditions are not met."
           fi
 
       - name: Post logs as comment
-        # if: ${{ success() && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'train-model') }}
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            const content = fs.readFileSync('logs.txt', 'utf8');
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Logs:\n```\n' + content + '\n```'
+            });
+      - name: Post logs as comment
+        if: ${{ success() && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'train-model') }}
         uses: actions/github-script@v4
         with:
           script: |
