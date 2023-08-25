@@ -28,18 +28,25 @@ for i in os.listdir(PATH):
 img_laplacian = np.array(img)
 classes = np.array(classes)
 
-
+print("Data Loaded from repo")
 xtrain, xtest, ytrain, ytest = train_test_split(img_laplacian, classes, test_size=0.3, random_state=0, stratify=classes)
 model = ExtraTreesClassifier(n_estimators=100, random_state=0)
 
+
 y_pred = model.fit(xtrain, ytrain).predict(xtest)
+print("Models trained")
 accuracy = accuracy_score(ytest, y_pred)
 report = classification_report(ytest, y_pred)
 matrix = confusion_matrix(ytest, y_pred)
+
+print("Accuracy ", accuracy)
+print("Classification Report:",report)
+print("Confusion Matrix:\n",matrix)
+
 # Save model to file
 filename = f'model_{accuracy:.2f}_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.pkl'
 with open(filename, 'wb') as f:
   pickle.dump(model, f)
 # Write log file
-with open('log.txt', 'a') as f:
+with open('logs.txt', 'a') as f:
   f.write(f'{filename}\nAccuracy: {accuracy:.2f}\nClassification Report:\n{report}\nConfusion Matrix:\n{matrix}\n\n')
