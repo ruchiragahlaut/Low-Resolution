@@ -20,5 +20,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r model-backend/requirements.txt
       - name: Run specific file
-        run: python model-backend/test.py
+        run: |
+          python model-backend/test.py 
         if: ${{ github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'train-model') }}
+      - name: Post logs as comment
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            const content = fs.readFileSync('logs.txt', 'utf8');
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Logs:\n```\n' + content + '\n```'
+            });
+        
