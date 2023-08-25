@@ -1,5 +1,6 @@
 # Low-resolution image classification
 
+
 ## Project structure
 
 ```
@@ -16,7 +17,29 @@
 |       |-- database: contains django app for database model
 |       \-- api: contains django app for api endpoints
 |
-\-- model-backend: contains the code for the ML model training (structure pending)
+|-- Data
+|   |-- cargo
+|   |-- Container
+|   |-- Fishing vessel
+|   |-- fishing vessels or small ships
+|   |-- Island.zip
+|   \-- Tanker.zip
+|
+|-- model-backend
+|   |-- model
+|   |   |-- cnn.py
+|   |   |-- common.py
+|   |   |-- edsr.py
+|   |   |-- prep_model.py
+|   |   |-- srgan.py
+|   |   |-- utils.py
+|   |   \-- __init__.py
+|   |
+|   |-- model.pkl
+|   |-- research1-ensemble.ipynb
+|   |-- research1.ipynb
+|   \-- research2.ipynb
+|
 ```
 
 ## Installation instructions
