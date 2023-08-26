@@ -20,7 +20,7 @@ const mainGridStyles = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  height: "min-content",
+  height: "100vh",
   padding: 2,
   overflow: 'auto'
 };
@@ -40,7 +40,10 @@ export default function BaseTemplateLayout({ children }) {
         component={Status ? "main" : Paper}
         sx={{
           ...mainGridStyles,
-          ...(Status ? {} : { justifyContent: 'center' })
+          ...(Status ? {} : {
+            justifyContent: 'center',
+            height: 'min-content',
+          })
         }}>
         <Header />
         {children}

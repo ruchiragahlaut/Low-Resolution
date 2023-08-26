@@ -119,6 +119,7 @@ export default function DatabaseViewPage() {
     data.append("title", Title);
     data.append("country", Country);
     data.append("class_of_album", Class_of_album);
+    data.append("weapons", Weapons);
     const config = {
       withCredentials: true,
       headers: {
