@@ -34,7 +34,11 @@ jobs:
           fi
       - name: Create environment file
         run: |
-          echo "COMMENT_CONTENT=$(cat logs.txt)" >> $GITHUB_ENV
+          COMMENT_CONTENT=$(cat logs.txt)
+          COMMENT_CONTENT="${COMMENT_CONTENT//'%'/'%25'}"
+          COMMENT_CONTENT="${COMMENT_CONTENT//$'\n'/'%0A'}"
+          COMMENT_CONTENT="${COMMENT_CONTENT//$'\r'/'%0D'}"
+          echo "COMMENT_CONTENT=$COMMENT_CONTENT" >> $GITHUB_ENV
         shell: bash
       - name: Post comment
         uses: KeisukeYamashita/create-comment@v1
