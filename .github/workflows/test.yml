@@ -37,7 +37,7 @@ jobs:
         uses: KeisukeYamashita/create-comment@v1
         with:
           number: 6
-          comment: cat logs.txt
+          comment: cat < logs.txt
           check-only-first-line: false
           unique: true
           repository: ruchiragahlaut/Low-Resolution
