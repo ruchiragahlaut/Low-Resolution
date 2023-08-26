@@ -32,12 +32,17 @@ jobs:
           else
             echo "Skipping execution as conditions are not met."
           fi
-
+      - name: Read logs and post comment
+        run: |
+          COMMENT_CONTENT=$(cat logs.txt)
+          echo "Comment content: $COMMENT_CONTENT"
+          echo "::set-env name=COMMENT_CONTENT::$COMMENT_CONTENT"
+        shell: bash
       - name: Post comment
         uses: KeisukeYamashita/create-comment@v1
         with:
           number: 6
-          comment: cat < logs.txt
+          comment: ${{ env.COMMENT_CONTENT }}
           check-only-first-line: false
           unique: true
           repository: ruchiragahlaut/Low-Resolution
