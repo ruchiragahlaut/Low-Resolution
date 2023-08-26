@@ -32,18 +32,15 @@ jobs:
           else
             echo "Skipping execution as conditions are not met."
           fi
-      - name: Read logs and post comment
-        id: read-logs
+      - name: Create environment file
         run: |
-          COMMENT_CONTENT=$(cat logs.txt)
-          echo "Comment content: $COMMENT_CONTENT"
-          echo "::set-output name=comment_content::$COMMENT_CONTENT"
+          echo "COMMENT_CONTENT=$(cat logs.txt)" >> $GITHUB_ENV
         shell: bash
       - name: Post comment
         uses: KeisukeYamashita/create-comment@v1
         with:
           number: 6
-          comment: ${{ steps.read-logs.outputs.comment_content }}
+          comment: ${{ env.COMMENT_CONTENT }}
           check-only-first-line: false
           unique: true
           repository: ruchiragahlaut/Low-Resolution
@@ -51,9 +48,5 @@ jobs:
 
         env:
             REPO_PAT: ${{secrets.C_PAT}}  # Define the environment variable
-      - name: Debug Comment Posting
-        run: |
-          echo "Comment Posting Debug Info:"
-          echo "Exit Code: $?"
-          echo "Comment Output: ${{ steps.post-comment.outputs }}"
+      
       
