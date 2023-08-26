@@ -33,28 +33,16 @@ jobs:
             echo "Skipping execution as conditions are not met."
           fi
 
-      - name: Post logs as comment
-        uses: actions/github-script@v4
+      - name: Post comment
+        uses: KeisukeYamashita/create-comment@v1
         with:
-          script: |
-            const fs = require('fs');
-            const content = fs.readFileSync('logs.txt', 'utf8');
-            github.issues.createComment({
-              issue_number: 6,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Logs:\n```\n' + content + '\n```'
-            });
-      - name: Post logs as comment
-        if: ${{ success() && github.ref == 'refs/heads/main' && contains(github.event.head_commit.message, 'train-model') }}
-        uses: actions/github-script@v4
-        with:
-          script: |
-            const fs = require('fs');
-            const content = fs.readFileSync('logs.txt', 'utf8');
-            github.issues.createComment({
-              issue_number: 6,  # Replace with the actual issue number
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: 'Logs:\n```\n' + content + '\n```'
-            });
+          number: 6
+          comment: cat logs.txt
+          check-only-first-line: false
+          unique: true
+          repository: ruchiragahlaut/Low-Resolution
+          token: ${{secrets.C_PAT}}  # Reference the repository secret
+
+        env:
+            REPO_PAT: ${{secrets.C_PAT}}  # Define the environment variable
+      
