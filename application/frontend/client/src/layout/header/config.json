@@ -8,7 +8,7 @@
     "headerText": "Batch Classification"
   },
   {
-    "pageURL": "/train",
+    "pageURL": "/retrain",
     "headerText": "Retrain Model"
   },
   {
@@ -18,5 +18,9 @@
   {
     "pageURL": "/login",
     "headerText": "Login"
+  },
+  {
+    "pageURL": "/database/add",
+    "headerText": "Add to database"
   }
 ]

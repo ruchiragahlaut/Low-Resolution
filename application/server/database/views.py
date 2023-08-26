@@ -12,7 +12,12 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ['id', 'title', 'country', 'class_of_album', 'images']
+        fields = [
+            'id',
+            'title', 'country', 'class_of_album',
+            'weapons',
+            'images'
+        ]
 
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.prefetch_related(Prefetch('albumimage_set', queryset=AlbumImage.objects.all(), to_attr='images'))

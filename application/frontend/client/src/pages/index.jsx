@@ -64,7 +64,7 @@ export default function IndexPage() {
       <Grid
         item xs={12}
         container component={Paper} style={styles}
-        onDragOver={e => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
         onDrop={handleFileChange}
       >
         <Grid item xs={10}>

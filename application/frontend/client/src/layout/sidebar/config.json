@@ -8,8 +8,8 @@
     "buttonText": "Batch Classification"
   },
   {
-    "pageURL": "/train",
-    "buttonText": "Train"
+    "pageURL": "/retrain",
+    "buttonText": "Retrain Model"
   },
   {
     "pageURL": "/database",

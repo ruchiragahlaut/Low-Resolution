@@ -1,11 +1,13 @@
 {
-  "baseurl": "http://localhost:8000",
+  "baseurl": "https://humble-dollop-xvj4p9rqpvxc6649-8000.app.github.dev",
   "auth": {
     "session": {
-      "new": "/api/auth/session/new/",
-      "login": "/api/auth/session/login/",
-      "validate": "/api/auth/session/validate/",
-      "logout": "/api/auth/session/logout/"
+      "new": "/api/auth/new/",
+      "login": "/api/auth/login/",
+      "validate": "/api/auth/validate/",
+      "logout": "/api/auth/logout/"
     }
-  }
+  },
+  "database": "/api/db/",
+  "images": "/api/db/images/"
 }

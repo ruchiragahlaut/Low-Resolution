@@ -20,8 +20,9 @@ const mainGridStyles = {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  height: "max-content",
+  height: "min-content",
   padding: 2,
+  overflow: 'auto'
 };
 
 export default function BaseTemplateLayout({ children }) {
@@ -31,7 +32,7 @@ export default function BaseTemplateLayout({ children }) {
     <div>
       <img src={bgimage} alt="Background" style={bgimageStyles} />
     </div>
-    <Grid container sx={{ justifyContent: 'center', alignContent: 'center', height: '100vh' }} >
+    <Grid container sx={{ justifyContent: 'center', alignContent: 'center', height: '100vh', overflow: 'auto' }} >
       {Status && <Grid item xs={2} component={Sidebar} />}
 
       {/* 9.9 grid columns because layout breaks at 10 */}
