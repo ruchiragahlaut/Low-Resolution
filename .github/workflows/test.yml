@@ -32,21 +32,23 @@ jobs:
           else
             echo "Skipping execution as conditions are not met."
           fi
-      - name: Create environment file
+      - name: Format comment content
+        id: format_content
         run: |
           COMMENT_CONTENT=$(cat logs.txt)
           COMMENT_CONTENT="${COMMENT_CONTENT//'%'/'%25'}"
           COMMENT_CONTENT="${COMMENT_CONTENT//$'\n'/'%0A'}"
           COMMENT_CONTENT="${COMMENT_CONTENT//$'\r'/'%0D'}"
-          echo "COMMENT_CONTENT=$COMMENT_CONTENT" >> $GITHUB_ENV
-        shell: bash
+          DECODED_CONTENT=$(node -e "console.log(decodeURIComponent('${COMMENT_CONTENT}'))")
+          echo "decoded_content=$DECODED_CONTENT" >> $GITHUB_ENV
+        env:
+          COMMENT_CONTENT: ${{ steps.run_and_comment.outputs.comment }}
       - name: Post comment
         uses: KeisukeYamashita/create-comment@v1
         with:
           number: 6
-          comment: ${{ env.COMMENT_CONTENT }}
-          check-only-first-line: false
-          unique: true
+          comment: |
+            ${{ steps.format_content.outputs.decoded_content }}
           repository: ruchiragahlaut/Low-Resolution
           token: ${{secrets.C_PAT}}  # Reference the repository secret
 
