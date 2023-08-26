@@ -36,6 +36,7 @@ jobs:
         id: read-logs
         run: |
           COMMENT_CONTENT=$(cat logs.txt)
+          echo "Comment content: $COMMENT_CONTENT"
           echo "::set-output name=comment_content::$COMMENT_CONTENT"
         shell: bash
       - name: Post comment
@@ -50,4 +51,9 @@ jobs:
 
         env:
             REPO_PAT: ${{secrets.C_PAT}}  # Define the environment variable
+      - name: Debug Comment Posting
+        run: |
+          echo "Comment Posting Debug Info:"
+          echo "Exit Code: $?"
+          echo "Comment Output: ${{ steps.post-comment.outputs }}"
       
