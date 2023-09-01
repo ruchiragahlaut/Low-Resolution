@@ -21,25 +21,25 @@ masks = {
   'soebel2': np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]]),
 }
 
-def applyLaplacian(laplacianMask, img):
-  # Apply laplacian filter to the image
-  filteredImg = cv2.filter2D(img, -1, laplacianMask)
+# def applyLaplacian(laplacianMask, img):
+#   # Apply laplacian filter to the image
+#   filteredImg = cv2.filter2D(img, -1, laplacianMask)
   
-  # Add the filtered image to the original image to enhance the boundary information
-  finalImg = np.uint8(np.clip(img + filteredImg, 0, 255))
-  return finalImg
+#   # Add the filtered image to the original image to enhance the boundary information
+#   finalImg = np.uint8(np.clip(img + filteredImg, 0, 255))
+#   return finalImg
   
-def applySobel(img):
-  s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
-  s2 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
-  return s1, s2
+# def applySobel(img):
+#   s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
+#   s2 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
+#   return s1, s2
   
    
 
   
 def train_model( X, y, model):
     # Split data into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(list(X), y, test_size=0.3, random_state=0, stratify=y)
     # Preprocess training data
     
     # Train model on preprocessed data
@@ -54,39 +54,64 @@ def train_model( X, y, model):
     return accuracy, report, matrix
 
 
+from functools import partial
+
+def applyLaplacian(mask, img):
+  # Apply laplacian filter to the image
+  filteredImg = cv2.filter2D(img, -1, mask)
+  
+  # Add the filtered image to the original image to enhance the boundary information
+  finalImg = np.uint8(np.clip(img + filteredImg, 0, 255))
+  return finalImg
+  
+def applySobel(mask, img):
+  s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
+  # s2 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
+  return s1
+
 def model_selector(X, y):
   # Create multiple models
   accuracies = []
   models = []
   for mask_type in masks:
     if mask_type in ['laplacian1', 'laplacian2', 'laplacian3', 'laplacian4', 'laplacian5', 'laplacian6']:
-      X = [applyLaplacian(masks[mask_type], img) for img in X]
-      X = [cv2.resize(img, (224, 224)) for img in X]
-      X = [img.flatten() for img in X]
-      X = StandardScaler().fit_transform(X)
+      mask = masks[mask_type]
+      applyFilter = partial(applyLaplacian, mask)
     elif mask_type in ['soebel1', 'soebel2']:
-      X = [applySobel(img) for img in X]
-      X = [cv2.resize(img, (224, 224)) for img in X]
-      X = [img.flatten() for img in X]
-      X = StandardScaler().fit_transform(X)
-    
+      mask = masks[mask_type]
+      applyFilter = partial(applySobel, mask)
+    else:
+      continue
+    print("Calculating for ", mask_type)
     
     for model_type in ['extra_trees', 'svm']:
       if model_type == 'extra_trees':
         model = ExtraTreesClassifier(n_estimators=100, random_state=0)
-        accuracy, report, matrix = train_model(X, y, model)
+        X_filtered = (applyFilter(img) for img in X)
+        X_resized = (cv2.resize(img, (128, 128)) for img in X_filtered)
+        X_scaled = (img.flatten() for img in X_resized)
+        # X_scaled = StandardScaler().fit_transform(X_processed)
+        accuracy, report, matrix = train_model(X_scaled, y, model)
         print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
         accuracies.append(accuracy)
         models.append(model)
       elif model_type == 'svm':
         model = SVC(kernel='linear', C=1.0, random_state=0)
-        accuracy, report, matrix = train_model(X, y, model)
+        X_filtered = (applyFilter(img) for img in X)
+        X_resized = (cv2.resize(img, (128, 128)) for img in X_filtered)
+        X_scaled = (img.flatten() for img in X_resized)
+        # X_scaled = StandardScaler().fit_transform(X_processed)
+        accuracy, report, matrix = train_model(X_scaled, y, model)
         print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
         accuracies.append(accuracy)
         models.append(model)
       elif model_type == 'xgb':
         model = XGBClassifier(random_state=0)
-        accuracy, report, matrix = train_model(X, y, model)
+        X_filtered = (applyFilter(img) for img in X)
+        X_resized = (cv2.resize(img, (128, 128)) for img in X_filtered)
+        X_scaled = (img.flatten() for img in X_resized)
+        # X_scaled = StandardScaler().fit_transform(X_processed)
+        accuracy, report, matrix = train_model(X_scaled, y, model)
         print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
         accuracies.append(accuracy)
         models.append(model)
@@ -97,9 +122,13 @@ def model_selector(X, y):
   top_models = [models[i] for i in np.argsort(accuracies)[-5:]]
   # Combine models using voting classifier
   voting_clf = VotingClassifier([(str(i), model.model) for i, model in enumerate(top_models)], voting='hard')
-  voting_clf.fit(X, y)
+  X_filtered = (applyFilter(img) for img in X)
+  X_resized = (cv2.resize(img, (128, 128)) for img in X_filtered)
+  X_scaled = (img.flatten() for img in X_resized)
+  # X_scaled = StandardScaler().fit_transform(X_processed)
+  voting_clf.fit(X_scaled, y)
   # Evaluate ensemble model on testing data
-  y_pred = voting_clf.predict(X)
+  y_pred = voting_clf.predict(X_scaled)
   accuracy = accuracy_score(y, y_pred)
   report = classification_report(y, y_pred)
   matrix = confusion_matrix(y, y_pred)
