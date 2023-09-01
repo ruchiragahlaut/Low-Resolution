@@ -1,2 +1,11 @@
+pipreqs==0.4.13
+# Django
 Django==4.2.4
 djangorestframework==3.14.0
+django-cors-headers==4.2.0
+# Django.models.Model.ImageField
+Pillow==10.0.0
+# ML Model
+opencv_python==4.8.0.76
+opencv-python-headless==4.8.0.76
+scikit-learn==1.1.1

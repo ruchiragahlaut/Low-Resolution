@@ -1,0 +1,26 @@
+[
+  {
+    "pageURL": "/detect",
+    "headerText": "Low Resolution Image Classification"
+  },
+  {
+    "pageURL": "/batch",
+    "headerText": "Batch Classification"
+  },
+  {
+    "pageURL": "/retrain",
+    "headerText": "Retrain Model"
+  },
+  {
+    "pageURL": "/database",
+    "headerText": "Database"
+  },
+  {
+    "pageURL": "/login",
+    "headerText": "Login"
+  },
+  {
+    "pageURL": "/database/add",
+    "headerText": "Add to database"
+  }
+]

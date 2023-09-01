@@ -1,0 +1,22 @@
+[
+  {
+    "pageURL": "/detect",
+    "buttonText": "Detect"
+  },
+  {
+    "pageURL": "/batch",
+    "buttonText": "Batch Classification"
+  },
+  {
+    "pageURL": "/retrain",
+    "buttonText": "Retrain Model"
+  },
+  {
+    "pageURL": "/database",
+    "buttonText": "Database"
+  },
+  {
+    "pageURL": "/logout",
+    "buttonText": "Logout"
+  }
+]

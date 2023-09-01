@@ -25,11 +25,31 @@ SECRET_KEY = "django-insecure-_x8#)7l@oeym8+qhqybhcfp_xpw6chpa$-0wr6p!k)q@sr)p0n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+  "localhost",
+  "humble-dollop-xvj4p9rqpvxc6649-8000.app.github.dev",
+  "humble-dollop-xvj4p9rqpvxc6649-3000.app.github.dev"
+]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "http://localhost:8000",
+    "https://localhost:8000",
+    "https://humble-dollop-xvj4p9rqpvxc6649-8000.app.github.dev",
+    "https://humble-dollop-xvj4p9rqpvxc6649-3000.app.github.dev"
+]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "https://localhost:3000",
+    "http://localhost:8000",
+    "https://localhost:8000",
+    "https://humble-dollop-xvj4p9rqpvxc6649-8000.app.github.dev",
+    "https://humble-dollop-xvj4p9rqpvxc6649-3000.app.github.dev"
+]
+CORS_ALLOW_CREDENTIALS = True
+COOKIE_HTTPONLY = False
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -37,14 +57,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
     "rest_framework",
-    "api",
-    "database"
+    "database",
+    "machinelearning"
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -123,6 +145,8 @@ STATIC_URL = 'site/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

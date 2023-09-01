@@ -1,22 +1,29 @@
 {
-  "files.autoSave": "afterDelay",
-  "files.exclude": {
-    "**/__pycache__": true
+  "[python]": {
+    "editor.formatOnPaste": false,
+    "editor.formatOnSave": false,
+    "editor.wordBasedSuggestions": false
   },
+  "editor.detectIndentation": false,
   "editor.fontSize": 18,
+  "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
   "editor.formatOnType": true,
-  "editor.formatOnPaste": true,
-  "editor.renderWhitespace": "boundary",
-  "files.insertFinalNewline": true,
-  "files.trimFinalNewlines": true,
-  "editor.rulers": [80],
   "editor.minimap.maxColumn": 80,
   "editor.minimap.renderCharacters": false,
   "editor.minimap.scale": 2,
   "editor.minimap.size": "proportional",
+  "editor.renderWhitespace": "boundary",
+  "editor.rulers": [
+    80
+  ],
   "editor.tabSize": 2,
-  "editor.detectIndentation": false,
+  "files.autoSave": "afterDelay",
+  "files.exclude": {
+    "**/__pycache__": true
+  },
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
   "liveServer.settings.NoBrowser": true,
   "notebook.cellToolbarLocation": {
     "default": "left"
@@ -26,16 +33,11 @@
   "notebook.formatOnSave.enabled": false,
   "notebook.lineNumbers": "on",
   "notebook.markup.fontSize": 12,
+  "notebook.output.scrolling": true,
   "python.analysis.autoFormatStrings": true,
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.useLibraryCodeForTypes": true,
   "python.terminal.activateEnvironment": false,
-  "[python]": {
-    "editor.formatOnSave": false,
-    "editor.formatOnPaste": false,
-    "editor.wordBasedSuggestions": false
-  },
-  "notebook.output.scrolling": true,
   "githubPullRequests.ignoredPullRequestBranches": ["main"],
   "editor.acceptSuggestionOnEnter": "on"
 }

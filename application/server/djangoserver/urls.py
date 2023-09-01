@@ -14,19 +14,73 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.urls import path, include
+from django.contrib import admin
+from django.contrib.sessions.models import Session
 
-from django.http import HttpResponseRedirect
+from django.views.static import serve
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 
+from database import views as database_views
+from machinelearning import views as machinelearning_views
+
+# Redirect ROOT_URL to the client site
+CLIENT_SITE_URL = settings.STATIC_URL + "client/index.html"
+def index(request):
+    """
+    Redirect request at ROOT_URL to the client site by default.
+    """
+    return HttpResponseRedirect(CLIENT_SITE_URL)
+
+@ensure_csrf_cookie
+def new_session(request):
+    """
+    Create new session for client.
+    """
+    return HttpResponse(status=200)
+
+def validate_session(request):
+    """
+    Validate session so that only HTTP requests with valid sessionid
+    can access the API endpoints.
+    """
+    sessionid = request.COOKIES.get("sessionid")
+    if sessionid is None:
+        return HttpResponse(status=401)
+    try:
+        session = Session.objects.get(session_key=sessionid)
+    except Session.DoesNotExist:
+        return HttpResponse(status=401)
+    return HttpResponse(status=201)
+
 urlpatterns = [
-    # Client site (static), redirect ROOT_URL to the same
-    path('', lambda req: HttpResponseRedirect(settings.STATIC_URL + "client/index.html")),
+    path(r'', index),
+    path(r'media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),
 
     # API Endpoints
-    path('api/', include('api.urls')),
+    path(r'api/auth/', include('rest_framework.urls')),
+    path(r'api/auth/new/', new_session),
+    path(r'api/auth/validate/', validate_session),
 
-    # Django Admin
-    path('admin/', admin.site.urls),
+    path(r'api/db/', database_views.AlbumViewSet.as_view({'get': 'list'})),
+    path(r'api/db/create/', database_views.AlbumViewSet.as_view({'post': 'create'})),
+    path(r'api/db/<int:pk>/', database_views.AlbumViewSet.as_view({'get': 'retrieve'})),
+    path(r'api/db/<int:pk>/patch/', database_views.AlbumViewSet.as_view({'patch': 'partial_update'})),
+    # path(r'api/db/<int:pk>/update/', database_views.AlbumViewSet.as_view({'put': 'update'})),
+    path(r'api/db/<int:pk>/delete/', database_views.AlbumViewSet.as_view({'delete': 'destroy'})),
+
+    path(r'api/db/images/', database_views.AlbumImageViewSet.as_view({'get': 'list'})),
+    path(r'api/db/images/create/', database_views.AlbumImageViewSet.as_view({'post': 'create'})),
+    path(r'api/db/images/<int:pk>/', database_views.AlbumImageViewSet.as_view({'get': 'retrieve'})),
+    # path(r'api/db/images/<int:pk>/update/', database_views.AlbumImageViewSet.as_view({'put': 'update'})),
+    path(r'api/db/images/<int:pk>/delete/', database_views.AlbumImageViewSet.as_view({'delete': 'destroy'})),
+
+    path(r'api/ml/detect/', machinelearning_views.detect),
+    path(r'api/ml/batch/', machinelearning_views.batch_detect),
+    path(r'api/ml/retrain/', machinelearning_views.retrain),
+
+    # Django Administration
+    path(r'admin/', admin.site.urls),
 ]

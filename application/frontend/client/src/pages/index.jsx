@@ -1,8 +1,12 @@
 import { Grid, Box, Paper, Button, Alert } from "@mui/material";
-import { useState, useRef, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import { DetectContext } from "../base/context";
+import { AuthContext } from "../base/contexts/auth";
+import { DetectContext } from "../base/contexts/detect";
+import endpoints from "../base/endpoints.json";
+import Protected from "../layout/protected";
 
 const styles = {
   padding: 16
@@ -11,14 +15,14 @@ const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff"];
 
 export default function IndexPage() {
   const navigate = useNavigate();
-
-  const { setImage, setFile, setSize } = useContext(DetectContext);
+  const { CSRFtoken } = useContext(AuthContext);
+  const {
+    setImageBin, setFilename, setBytessize,
+    setPredictions
+  } = useContext(DetectContext);
 
   const [error, setError] = useState(false);
   const [message, setMessage] = useState("Please upload an image of an object for classification.");
-
-  const fileInputRef = useRef(null);
-  const dragAndDropRef = useRef(null);
 
   const handleFileChange = (e) => {
     e.preventDefault();
@@ -38,15 +42,41 @@ export default function IndexPage() {
           setMessage("Please upload an image of an object for classification.");
 
           const reader = new FileReader();
-          reader.readAsDataURL(file);
+          reader.readAsArrayBuffer(file);
           reader.onload = () => {
-            const base64String = reader.result;
+            const buffer = reader.result;
 
-            setImage(base64String);
-            setFile(file.name);
-            setSize(file.size);
+            // Set image data
+            const ImageBin = new File([new Uint8Array(buffer)], fileName, { type: fileType });
+            setImageBin(ImageBin);
+            setFilename(file.name);
+            setBytessize(file.size);
 
-            navigate("/detect");
+            // Make API call to ML endpoint
+            const URL = endpoints.baseurl + endpoints.ml.detect;
+            const data = new FormData();
+            data.append("image", ImageBin);
+            data.append("csrfmiddlewaretoken", CSRFtoken);
+            const config = {
+              withCredentials: true,
+              headers: {
+                "X-CSRFToken": CSRFtoken,
+              }
+            };
+
+            setError(false);
+            setMessage("Analysing image ...");
+
+            axios.post(URL, data, config).then(res => {
+              setPredictions(res.data);
+
+              navigate("/detect");
+            }).catch(err => {
+              setError(true);
+              setMessage(`${err.response?.data ?? err.message}`);
+            });
+
+            // navigate("/detect");
           }
 
         } else {
@@ -60,24 +90,13 @@ export default function IndexPage() {
     }
   }
 
-  useEffect(() => {
-    const fileInput = fileInputRef?.current;
-    const dragAndDrop = dragAndDropRef?.current;
-    fileInput.addEventListener("change", handleFileChange);
-    dragAndDrop.addEventListener("drop", handleFileChange);
-    return () => {
-      fileInput.removeEventListener("change", handleFileChange);
-      dragAndDrop.removeEventListener("drop", handleFileChange);
-    }
-  });
-
-  return <>
+  return <Protected>
     <Grid container gap={4} paddingY={2}>
       <Grid
         item xs={12}
         container component={Paper} style={styles}
-        ref={dragAndDropRef}
-        onDragOver={e => e.preventDefault()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleFileChange}
       >
         <Grid item xs={10}>
           Drag and drop an image here
@@ -91,7 +110,7 @@ export default function IndexPage() {
           <Button variant="contained" component="label">
             <input
               type="file"
-              ref={fileInputRef}
+              onChange={handleFileChange}
               accept="image/*"
               hidden
             />
@@ -106,5 +125,5 @@ export default function IndexPage() {
         </Alert>
       </Grid>
     </Grid>
-  </>;
+  </Protected>;
 }
