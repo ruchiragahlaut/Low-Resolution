@@ -25,7 +25,7 @@ jobs:
         pip install -r model-backend/requirements.txt
 
     - name: Run Grid Search
-      if: 'contains(github.event.head_commit.message, "grid-search-begin")'
+      if: contains(github.event.head_commit.message, 'grid-search-begin')
       run: |
         python model-backend/grid-search.py
         cp voting_classifier.pkl model-backend/
