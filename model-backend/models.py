@@ -71,7 +71,7 @@ def model_selector(X, y):
       X = StandardScaler().fit_transform(X)
     
     
-    for model_type in ['extra_trees', 'svm', 'xgb']:
+    for model_type in ['extra_trees', 'svm']:
       if model_type == 'extra_trees':
         model = ExtraTreesClassifier(n_estimators=100, random_state=0)
         accuracy, report, matrix = train_model(X, y, model)
