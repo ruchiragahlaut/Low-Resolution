@@ -23,27 +23,24 @@ jobs:
           pip install -r model-backend/requirements.txt
 
       - name: Run specific file
+        if: contains(github.event.head_commit.message, 'train-model')
         run: |
-          if [[ "${{ github.ref }}" == "refs/heads/main" && "${{ github.event.head_commit.message }}" == *"train-model"* ]]; then
-            python model-backend/test.py > logs.txt
-            cat logs.txt
-            echo "Execution completed."
+          python model-backend/test.py > logs.txt
+          cat logs.txt
+          echo "Execution completed."
 
-          else
-            echo "Skipping execution as conditions are not met."
-          fi
       - name: Format comment content
         id: format_content
+        if: contains(github.event.head_commit.message, 'train-model')
         run: |
           COMMENT_CONTENT=$(cat logs.txt)
-          COMMENT_CONTENT="${COMMENT_CONTENT//'%'/'%25'}"
-          COMMENT_CONTENT="${COMMENT_CONTENT//$'\n'/'%0A'}"
-          COMMENT_CONTENT="${COMMENT_CONTENT//$'\r'/'%0D'}"
-          DECODED_CONTENT=$(node -e "console.log(decodeURIComponent('${COMMENT_CONTENT}'))")
-          echo "decoded_content=$DECODED_CONTENT" >> $GITHUB_ENV
-        env:
-          COMMENT_CONTENT: ${{ steps.run_and_comment.outputs.comment }}
+          COMMENT_CONTENT="${COMMENT_CONTENT//'%'/', '}" # Add a comma and two spaces to the end of each line
+          COMMENT_CONTENT="${COMMENT_CONTENT//$'\n'/',  '}" # Add a comma and two spaces to the end of each line
+          COMMENT_CONTENT="${COMMENT_CONTENT//$'\r'/',  '}" # Add a comma and two spaces to the end of each line
+          echo "decoded_content=$COMMENT_CONTENT" >> $GITHUB_ENV
+
       - name: Post comment
+        if: contains(github.event.head_commit.message, 'train-model')
         uses: KeisukeYamashita/create-comment@v1
         with:
           number: 6
@@ -54,5 +51,17 @@ jobs:
 
         env:
             REPO_PAT: ${{secrets.C_PAT}}  # Define the environment variable
+      
+      # - name: Post comment
+      #   uses: KeisukeYamashita/create-comment@v1
+      #   with:
+      #     number: 6
+      #     comment: |
+      #       ${{ steps.format_content.outputs.decoded_content }}
+      #     repository: ruchiragahlaut/Low-Resolution
+      #     token: ${{secrets.C_PAT}}  # Reference the repository secret
+
+      #   env:
+      #       REPO_PAT: ${{secrets.C_PAT}}  # Define the environment variable
       
       

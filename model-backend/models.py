@@ -77,21 +77,25 @@ def model_selector(X, y):
       if model_type == 'extra_trees':
         model = ExtraTreesClassifier(n_estimators=100, random_state=0)
         accuracy, report, matrix = train_model(X, y, model)
+        print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
         accuracies.append(accuracy)
         models.append(model)
       elif model_type == 'svm':
         model = SVC(kernel='linear', C=1.0, random_state=0)
         accuracy, report, matrix = train_model(X, y, model)
+        print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
         accuracies.append(accuracy)
         models.append(model)
       elif model_type == 'xgb':
         model = XGBClassifier(random_state=0)
         accuracy, report, matrix = train_model(X, y, model)
+        print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
         accuracies.append(accuracy)
         models.append(model)
       
   
   # Choose top 5 models based on accuracy
+  print("Choosing top 5 models based on accuracy")
   top_models = [models[i] for i in np.argsort(accuracies)[-5:]]
   # Combine models using voting classifier
   voting_clf = VotingClassifier([(str(i), model.model) for i, model in enumerate(top_models)], voting='hard')
