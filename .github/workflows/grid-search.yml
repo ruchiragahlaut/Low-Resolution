@@ -31,9 +31,9 @@ jobs:
       run: |
         python model-backend/grid-search.py
         cp voting_classifier.pkl model-backend/
-        git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-        git add model-backend/voting_classifier.pkl
+        git config --global user.email "20bce057@nirmauni.ac.in"
+        git config --global user.name "Devasy23"
+        git add .
         git commit -m "Add voting classifier model"
         git branch grid-search-changes  # Create a new branch
         git checkout grid-search-changes
