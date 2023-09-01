@@ -1,4 +1,3 @@
-import os
 import cv2
 import numpy as np
 from datetime import datetime
@@ -6,7 +5,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import ExtraTreesClassifier, VotingClassifier
 from sklearn.svm import SVC
-from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import pickle
 
