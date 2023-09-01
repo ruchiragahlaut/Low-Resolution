@@ -18,7 +18,7 @@ masks = {
   'laplacian5': np.array([[0, -1, 0], [-1, 4, -1], [0, -1, 0]]),
   'laplacian6': np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]),
   'soebel1': np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]]),
-  'soebel2': np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]]),
+  # 'soebel2': np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]]),
 }
 
 # def applyLaplacian(laplacianMask, img):
@@ -84,7 +84,7 @@ def model_selector(X, y):
       continue
     print("Calculating for ", mask_type)
     
-    for model_type in ['extra_trees', 'svm']:
+    for model_type in ['extra_trees']:
       if model_type == 'extra_trees':
         model = ExtraTreesClassifier(n_estimators=100, random_state=0)
         X_filtered = (applyFilter(img) for img in X)
@@ -119,21 +119,16 @@ def model_selector(X, y):
   
   # Choose top 5 models based on accuracy
   print("Choosing top 5 models based on accuracy")
-  top_models = [models[i] for i in np.argsort(accuracies)[-5:]]
-  # Combine models using voting classifier
-  voting_clf = VotingClassifier([(str(i), model.model) for i, model in enumerate(top_models)], voting='hard')
-  X_filtered = (applyFilter(img) for img in X)
-  X_resized = (cv2.resize(img, (128, 128)) for img in X_filtered)
+  top_models = [model for _, model in sorted(zip(accuracies, models), reverse=True)[:5]]
+  voting_clf = VotingClassifier([(str(i), model) for i, model in enumerate(top_models)], voting='hard')
+  
+  X_resized = (cv2.resize(img, (128, 128)) for img in X)
   X_scaled = (img.flatten() for img in X_resized)
-  # X_scaled = StandardScaler().fit_transform(X_processed)
-  voting_clf.fit(X_scaled, y)
-  # Evaluate ensemble model on testing data
-  y_pred = voting_clf.predict(X_scaled)
-  accuracy = accuracy_score(y, y_pred)
-  report = classification_report(y, y_pred)
-  matrix = confusion_matrix(y, y_pred)
+  
+  
+  accuracy, report, matrix = train_model(X_scaled, y, voting_clf)
   # Save model to file
-  filename = f'model_{accuracy:.2f}_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.pkl'
+  filename = f'model_{accuracy:.2f}_{datetime.now().strftime("%Y-%m-%d")}.pkl'
   with open(filename, 'wb') as f:
     pickle.dump(voting_clf, f)
   # Write log file

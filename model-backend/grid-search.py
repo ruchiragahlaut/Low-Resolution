@@ -19,4 +19,4 @@ y = np.array(y)
 print(X.shape, y.shape)
 vclf = models.model_selector(X, y)
 # Dump the model
-pickle.dump(vclf, open('voting_classifier.pkl', 'wb'))
+# pickle.dump(vclf, open('voting_classifier.pkl', 'wb'))
