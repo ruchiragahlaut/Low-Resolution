@@ -1,3 +1,4 @@
+[![Grid Search Workflow](https://github.com/ruchiragahlaut/Low-Resolution/actions/workflows/grid-search.yml/badge.svg)](https://github.com/ruchiragahlaut/Low-Resolution/actions/workflows/grid-search.yml)
 # Low-resolution image classification
 
 
