@@ -29,7 +29,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.C_PAT }}
       run: |
-        touch zxc.txt
+        python model-backend/grid-search.py
         git config --global user.email "20bce057@nirmauni.ac.in"
         git config --global user.name "Devasy23"
         git add .
