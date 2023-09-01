@@ -34,7 +34,6 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git add test.txt
         git commit -m "Add voting classifier model"
-        git push
     - name: Create Pull Request
       if: contains(github.event.head_commit.message, 'grid-search-begin')
       uses: peter-evans/create-pull-request@v3
