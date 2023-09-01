@@ -26,6 +26,8 @@ jobs:
 
     - name: Run Grid Search
       if: contains(github.event.head_commit.message, 'grid-search-begin')
+      env:
+        GITHUB_TOKEN: ${{ secrets.C_PAT }}
       run: |
         python model-backend/grid-search.py
         cp voting_classifier.pkl model-backend/
