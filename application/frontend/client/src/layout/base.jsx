@@ -1,7 +1,8 @@
-import { Grid, Box, Paper } from "@mui/material";
+import { Grid, Box, Paper, Alert } from "@mui/material";
 
 import { useContext } from "react";
 import { AuthContext } from "../base/contexts/auth";
+import { NotificationContext } from "../base/contexts/notification";
 
 import Header from "./header/header";
 import Sidebar from "./sidebar/sidebar";
@@ -27,6 +28,7 @@ const mainGridStyles = {
 
 export default function BaseTemplateLayout({ children }) {
   const { Status } = useContext(AuthContext);
+  const { Message, Type } = useContext(NotificationContext);
 
   return <Box>
     <div>
@@ -44,8 +46,14 @@ export default function BaseTemplateLayout({ children }) {
             justifyContent: 'center',
             height: 'min-content',
           })
-        }}>
+        }}
+      >
         <Header />
+        {Message !== "" && <Box component={Paper} sx={{
+          width: "100%",
+        }}>
+          <Alert severity={Type} sx={{ m: 2 }}>{Message}</Alert>
+        </Box>}
         {children}
       </Grid>
     </Grid>

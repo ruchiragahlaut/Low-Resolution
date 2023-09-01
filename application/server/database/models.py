@@ -12,6 +12,9 @@ class Album(models.Model):
     class_of_album = models.CharField(max_length=70)
     weapons = models.CharField(max_length=70, blank=True)
 
+    def __str__(self):
+        return self.title
+
 class AlbumImage(models.Model):
     """
     Database model for an image in an album
@@ -20,7 +23,7 @@ class AlbumImage(models.Model):
         """
         Save image to media/album_id/image_id.jpg
         """
-        return f'{self.album.id}/{uuid.uuid4()}.jpg'
+        return f'{self.album.title}/{uuid.uuid4()}.jpg'
 
     def delete(self, *args, **kwargs):
         """
@@ -31,3 +34,6 @@ class AlbumImage(models.Model):
 
     image = models.ImageField(upload_to=image_upload_path)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.album.title} - {self.id}"

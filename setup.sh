@@ -1,6 +1,6 @@
 # Build static files
 cd ./application/frontend/client
-npm i && npm run build
+npm ci && npm run build
 
 cd ../../server
 

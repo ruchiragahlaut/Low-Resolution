@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Grid, Paper,
@@ -7,6 +7,8 @@ import {
   TableContainer, TableHead, TableRow,
 } from "@mui/material";
 import axios from "axios";
+
+import { NotificationContext } from "../../base/contexts/notification";
 
 import endpoints from "../../base/endpoints.json";
 import Protected from "../../layout/protected";
@@ -18,7 +20,7 @@ const styles = {
 export default function DatabaseListPage() {
   const navigate = useNavigate();
   const [TableData, setTableData] = useState([]);
-  const [Error, setError] = useState(null);
+  const { setType, setMessage } = useContext(NotificationContext);
 
   useEffect(() => {
     const URL = endpoints.baseurl + endpoints.database;
@@ -33,13 +35,13 @@ export default function DatabaseListPage() {
           "class": album.class_of_album,
           images: album.images.length,
         });
-        setError(null);
       });
       setTableData(data);
     }).catch((err) => {
-      setError(err.message);
+      setType("error");
+      setMessage(`Unable to fetch data. ${err.response?.data ?? err.message}`);
     });
-  }, []);
+  }, [setType, setMessage]);
 
   return <Protected>
     <Grid container gap={4} paddingY={2}>
@@ -76,13 +78,6 @@ export default function DatabaseListPage() {
                   </TableCell>
                 </TableRow>
               ))}
-              {
-                (TableData.length === 0) && <TableRow>
-                  <TableCell colSpan={6} align="center">{
-                    Error ?? "Loading data..."
-                  }</TableCell>
-                </TableRow>
-              }
             </TableBody>
           </Table>
         </TableContainer>

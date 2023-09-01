@@ -1,7 +1,13 @@
-__pycache__/
-
-db.sqlite3
+# Django
 static/
-media/
+migrations/
+!migrations/__init__.py
 
+# Database
+db.sqlite3
+media/
+machinelearning/model.pkl
+
+# Python
 venv/
+__pycache__/

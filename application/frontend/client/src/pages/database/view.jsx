@@ -4,6 +4,7 @@ import { Grid, Box, Paper, TextField, Button } from "@mui/material";
 import axios from "axios";
 
 import { AuthContext } from "../../base/contexts/auth";
+import { NotificationContext } from "../../base/contexts/notification";
 import endpoints from "../../base/endpoints.json";
 import Protected from "../../layout/protected";
 
@@ -18,6 +19,7 @@ export default function DatabaseViewPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { CSRFtoken } = useContext(AuthContext);
+  const { setType, setMessage } = useContext(NotificationContext);
 
   const [Title, setTitle] = useState("");
   const [Country, setCountry] = useState("");
@@ -41,9 +43,10 @@ export default function DatabaseViewPage() {
         }
       }));
     }).catch(err => {
-      console.log(err);
+      setType("error");
+      setMessage(`Unable to fetch data. ${err.response?.data ?? err.message}`);
     });
-  }, [id]);
+  }, [id, setType, setMessage]);
 
   const handleFileChange = async (e) => {
     e.preventDefault();
@@ -92,9 +95,10 @@ export default function DatabaseViewPage() {
                   ...prev
                 ]);
               } catch (err) {
-                console.log(err);
                 failed.push(file);
                 setUploadStatus(`Uploading ${completed.length} of ${total} images / ${failed.length} failed...`);
+                setType("error");
+                setMessage(`Unable to upload ${fileName}. ${err.response?.data ?? err.message}`);
               }
             }
           } else {
@@ -127,9 +131,12 @@ export default function DatabaseViewPage() {
       }
     };
     axios.patch(URL, data, config).then(res => {
+      setType("info");
+      setMessage("Updated successfully");
       navigate("/database/view/" + res.data.id);
     }).catch(err => {
-      console.log(err);
+      setType("error");
+      setMessage(`Unable to update. ${err.response?.data ?? err.message}`);
     });
   };
 
@@ -143,9 +150,12 @@ export default function DatabaseViewPage() {
       }
     };
     axios.delete(URL, config).then(res => {
+      setType("warning");
+      setMessage("Deleted successfully");
       navigate("/database/");
     }).catch(err => {
-      console.log(err);
+      setType("error");
+      setMessage(`Unable to delete. ${err.response?.data ?? err.message}`);
     });
   }
 
@@ -159,9 +169,12 @@ export default function DatabaseViewPage() {
       }
     };
     axios.delete(URL, config).then(res => {
+      setType("warning");
+      setMessage("Image deleted successfully");
       setImageList(ImageList.filter(image => image.primary_key !== id));
     }).catch(err => {
-      console.log(err);
+      setType("error");
+      setMessage(`Unable to delete image. ${err.response?.data ?? err.message}`);
     });
   }
 

@@ -1,8 +1,11 @@
 import { Grid, Box, Paper, Button, Alert } from "@mui/material";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
+import { AuthContext } from "../base/contexts/auth";
 import { DetectContext } from "../base/contexts/detect";
+import endpoints from "../base/endpoints.json";
 import Protected from "../layout/protected";
 
 const styles = {
@@ -12,8 +15,10 @@ const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff"];
 
 export default function IndexPage() {
   const navigate = useNavigate();
+  const { CSRFtoken } = useContext(AuthContext);
   const {
-    setImagebase64, setFilename, setBytessize
+    setImageBin, setFilename, setBytessize,
+    setPredictions
   } = useContext(DetectContext);
 
   const [error, setError] = useState(false);
@@ -37,15 +42,41 @@ export default function IndexPage() {
           setMessage("Please upload an image of an object for classification.");
 
           const reader = new FileReader();
-          reader.readAsDataURL(file);
+          reader.readAsArrayBuffer(file);
           reader.onload = () => {
-            const base64String = reader.result;
+            const buffer = reader.result;
 
-            setImagebase64(base64String);
+            // Set image data
+            const ImageBin = new File([new Uint8Array(buffer)], fileName, { type: fileType });
+            setImageBin(ImageBin);
             setFilename(file.name);
             setBytessize(file.size);
 
-            navigate("/detect");
+            // Make API call to ML endpoint
+            const URL = endpoints.baseurl + endpoints.ml.detect;
+            const data = new FormData();
+            data.append("image", ImageBin);
+            data.append("csrfmiddlewaretoken", CSRFtoken);
+            const config = {
+              withCredentials: true,
+              headers: {
+                "X-CSRFToken": CSRFtoken,
+              }
+            };
+
+            setError(false);
+            setMessage("Analysing image ...");
+
+            axios.post(URL, data, config).then(res => {
+              setPredictions(res.data);
+
+              navigate("/detect");
+            }).catch(err => {
+              setError(true);
+              setMessage(`${err.response?.data ?? err.message}`);
+            });
+
+            // navigate("/detect");
           }
 
         } else {

@@ -24,6 +24,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.conf import settings
 
 from database import views as database_views
+from machinelearning import views as machinelearning_views
 
 # Redirect ROOT_URL to the client site
 CLIENT_SITE_URL = settings.STATIC_URL + "client/index.html"
@@ -75,6 +76,10 @@ urlpatterns = [
     path(r'api/db/images/<int:pk>/', database_views.AlbumImageViewSet.as_view({'get': 'retrieve'})),
     # path(r'api/db/images/<int:pk>/update/', database_views.AlbumImageViewSet.as_view({'put': 'update'})),
     path(r'api/db/images/<int:pk>/delete/', database_views.AlbumImageViewSet.as_view({'delete': 'destroy'})),
+
+    path(r'api/ml/detect/', machinelearning_views.detect),
+    path(r'api/ml/batch/', machinelearning_views.batch_detect),
+    path(r'api/ml/retrain/', machinelearning_views.retrain),
 
     # Django Administration
     path(r'admin/', admin.site.urls),

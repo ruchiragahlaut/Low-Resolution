@@ -1,5 +1,7 @@
 {
-  "baseurl": "https://humble-dollop-xvj4p9rqpvxc6649-8000.app.github.dev",
+  "//": "Leave baseurl empty for same server",
+  "//": "or set to http://localhost:8000 for cross-server",
+  "baseurl": "",
   "auth": {
     "session": {
       "new": "/api/auth/new/",
@@ -9,5 +11,10 @@
     }
   },
   "database": "/api/db/",
-  "images": "/api/db/images/"
+  "images": "/api/db/images/",
+  "ml": {
+    "detect": "/api/ml/detect/",
+    "batch": "/api/ml/batch/",
+    "retrain": "/api/ml/retrain/"
+  }
 }

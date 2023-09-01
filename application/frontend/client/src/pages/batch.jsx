@@ -42,9 +42,9 @@ export default function BatchPage() {
           const reader = new FileReader();
           reader.readAsDataURL(file);
           reader.onload = () => {
-            const base64String = reader.result;
+            const imageBytes = reader.result;
 
-            setImage(base64String);
+            setImage(imageBytes);
             setFile(file.name);
             setSize(file.size);
 

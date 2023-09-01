@@ -5,6 +5,7 @@ import axios from "axios";
 
 import { getCookie } from "../base/utils";
 import { AuthContext } from "../base/contexts/auth";
+import { NotificationContext } from "../base/contexts/notification";
 import endpoints from "../base/endpoints.json";
 
 export default function LoginPage() {
@@ -14,17 +15,19 @@ export default function LoginPage() {
     CSRFtoken, setCSRFtoken,
     Status, setStatus
   } = useContext(AuthContext);
+  const { setType, setMessage } = useContext(NotificationContext);
   const [Password, setPassword] = useState(null);
 
   function updateCSRF() {
     // Clear cookie
-    document.cookie = `csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${endpoints.domain}`;
+    document.cookie = `csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 
     const URL = endpoints.baseurl + endpoints.auth.session.new;
     axios.get(URL, { withCredentials: true }).then(res => {
       setCSRFtoken(getCookie("csrftoken"));
     }).catch(err => {
-      console.info(err);
+      setType("error");
+      setMessage(`Unable to update CSRF Token`);
     });
   }
 
@@ -58,10 +61,13 @@ export default function LoginPage() {
         setStatus(res.status === 201);
         navigate("/");
       } else {
+        setType("error");
+        setMessage(`Username or password is incorrect.`);
         updateCSRF();
       }
     }).catch(err => {
-      console.info(err);
+      setType("error");
+      setMessage(`Unable to login. ${err.message}`);
       updateCSRF();
     });
   };

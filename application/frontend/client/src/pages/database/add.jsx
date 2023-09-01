@@ -4,12 +4,14 @@ import { Grid, Box, Paper, TextField, Button } from "@mui/material";
 import axios from "axios";
 
 import { AuthContext } from "../../base/contexts/auth";
+import { NotificationContext } from "../../base/contexts/notification";
 import endpoints from "../../base/endpoints.json";
 import Protected from "../../layout/protected";
 
 export default function DatabaseAddPage() {
   const navigate = useNavigate();
   const { CSRFtoken } = useContext(AuthContext);
+  const { setType, setMessage } = useContext(NotificationContext);
 
   const [Title, setTitle] = useState("");
   const [Country, setCountry] = useState("");
@@ -32,7 +34,8 @@ export default function DatabaseAddPage() {
     axios.post(URL, data, config).then(res => {
       navigate("/database/view/" + res.data.id);
     }).catch(err => {
-      console.log(err);
+      setType("error");
+      setMessage(`Unable to add. ${err.response?.data ?? err.message}`);
     });
   };
 

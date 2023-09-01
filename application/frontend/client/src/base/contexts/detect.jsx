@@ -1,21 +1,24 @@
 import { createContext, useState } from "react";
 
 export const DetectContext = createContext({
-  Imagebase64: null, setImagebase64: () => { },
+  ImageBin: null, setImageBin: () => { },
   Filename: null, setFilename: () => { },
   Bytessize: null, setBytessize: () => { },
+  Predictions: null, setPredictions: () => { },
 });
 
 export default function DetectContextProvider({ children }) {
-  const [Imagebase64, setImagebase64] = useState(null);
+  const [ImageBin, setImageBin] = useState(null);
   const [Filename, setFilename] = useState(null);
   const [Bytessize, setBytessize] = useState(null);
+  const [Predictions, setPredictions] = useState({});
 
   return <DetectContext.Provider
     value={{
-      Imagebase64, setImagebase64,
+      ImageBin, setImageBin,
       Filename, setFilename,
-      Bytessize, setBytessize
+      Bytessize, setBytessize,
+      Predictions, setPredictions,
     }}>
     {children}
   </DetectContext.Provider>
