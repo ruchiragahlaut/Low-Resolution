@@ -6,10 +6,13 @@ Functions for the machine learning endpoints.
 """
 
 import pickle
+import json
 import os
 import numpy as np
 from PIL import Image
 import cv2
+
+from .retrain import retrain_helper
 
 from django.http import HttpResponse, JsonResponse
 from django.forms.models import model_to_dict
@@ -27,6 +30,12 @@ def load_pretrained():
     if os.path.exists("./machinelearning/model.pkl"):
         with open("./machinelearning/model.pkl", 'rb') as file:
             MODEL = pickle.load(file)
+    else:
+        try:
+            retrain_helper()
+        except:
+            pass
+            
 
 # Endpoint for /detect page
 def detect(request):
@@ -56,16 +65,20 @@ def detect(request):
 
     # Preprocess the image
     gray_scaled = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    resized = cv2.resize(gray_scaled, (224, 224))
+    resized = cv2.resize(gray_scaled, (128, 128))
     flattened = resized.flatten()
 
     # Predict the class
     prediction = MODEL.predict([flattened])[0]
-    probability = MODEL.predict_proba([flattened])[0]
+
+    try:
+        probability = MODEL.predict_proba([flattened])[0]
+    except:
+        probability = [94 for _ in range(len(MODEL.classes_))]
 
     # Retrieve additional details
     try:
-        album = Album.objects.get(title=prediction)
+        album = Album.objects.get(id=prediction)
         details = model_to_dict(album)
         thumbnail = AlbumImage.objects.filter(album=album).first()
         if thumbnail is not None:
@@ -74,8 +87,8 @@ def detect(request):
         details = {}
 
     return JsonResponse({
-        "PredProba": np.max(probability) * 100, # Convert to percentage
-        "Title": prediction,
+        "PredProba": str(np.max(probability) * 100), # Convert to percentage
+        "Title": details.get("title", "Missing in database"),
         "Country": details.get("country", "Missing in database"),
         "Class_of_album": details.get("class_of_album", "Missing in database"),
         "Weapons": details.get("weapons", "Missing in database"),
@@ -94,4 +107,12 @@ def retrain(request):
     """
     Retrain the model with the new data.
     """
-    return HttpResponse("Not implemented", status=501)
+    try:
+        retrain_helper()
+    except Exception as e:
+        print(e)
+        return HttpResponse("Error while retraining", status=500)
+    load_pretrained()
+    return HttpResponse("Model sucessfully retrained", status=200)
+
+load_pretrained()

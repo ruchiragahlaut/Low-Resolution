@@ -97,8 +97,8 @@ export default function DatabaseViewPage() {
               } catch (err) {
                 failed.push(file);
                 setUploadStatus(`Uploading ${completed.length} of ${total} images / ${failed.length} failed...`);
-                setType("error");
-                setMessage(`Unable to upload ${fileName}. ${err.response?.data ?? err.message}`);
+                // setType("error");
+                // setMessage(`Unable to upload ${fileName}. ${err.response?.data ?? err.message}`);
               }
             }
           } else {

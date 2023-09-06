@@ -68,6 +68,7 @@ export default function IndexPage() {
             setMessage("Analysing image ...");
 
             axios.post(URL, data, config).then(res => {
+              res.data.PredProba = parseFloat(res.data.PredProba);
               setPredictions(res.data);
 
               navigate("/detect");

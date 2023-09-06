@@ -23,7 +23,7 @@ class AlbumImage(models.Model):
         """
         Save image to media/album_id/image_id.jpg
         """
-        return f'{self.album.title}/{uuid.uuid4()}.jpg'
+        return f'{self.album.id}/{uuid.uuid4()}.jpg'
 
     def delete(self, *args, **kwargs):
         """
