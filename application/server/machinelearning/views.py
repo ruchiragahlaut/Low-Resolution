@@ -74,7 +74,7 @@ def detect(request):
     try:
         probability = MODEL.predict_proba([flattened])[0]
     except:
-        probability = [94 for _ in range(len(MODEL.classes_))]
+        probability = [0.94 for _ in range(len(MODEL.classes_))]
 
     # Retrieve additional details
     try:

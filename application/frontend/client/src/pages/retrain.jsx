@@ -15,9 +15,11 @@ export default function RetrainPage() {
 
   function retrain() {
     const URL = endpoints.baseurl + endpoints.ml.retrain;
+    setType("info");
+    setMessage("Model retraining in progress... Please wait for a few moments.");
     axios.get(URL, { withCredentials: true })
       .then(res => {
-        setType("info");
+        setType("success");
         setMessage(res.data);
       }).catch(err => {
         setType("error");
