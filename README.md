@@ -1,5 +1,4 @@
-[![Grid Search Workflow](https://github.com/ruchiragahlaut/Low-Resolution/actions/workflows/grid-search.yml/badge.svg)](https://github.com/ruchiragahlaut/Low-Resolution/actions/workflows/grid-search.yml)
-# Low-resolution image classification
+[![Grid Search Workflow](https://github.com/Devasy23/Low-Resolution/actions/workflows/grid-search.yml/badge.svg?branch=main)](https://github.com/Devasy23/Low-Resolution/actions/workflows/grid-search.yml)# Low-resolution image classification
 
 
 ## Project structure

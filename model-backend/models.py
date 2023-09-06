@@ -64,10 +64,15 @@ def applyLaplacian(mask, img):
   finalImg = np.uint8(np.clip(img + filteredImg, 0, 255))
   return finalImg
   
-def applySobel(mask, img):
+def applySobel1(mask, img):
   s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
   # s2 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
   return s1
+def applySobel2(mask, img):
+  # s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
+  s2 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
+  return s2
+
 
 def model_selector(X, y):
   # Create multiple models
@@ -79,12 +84,15 @@ def model_selector(X, y):
       applyFilter = partial(applyLaplacian, mask)
     elif mask_type in ['soebel1', 'soebel2']:
       mask = masks[mask_type]
-      applyFilter = partial(applySobel, mask)
+      if(mask_type[-1]=='1'):
+        applyFilter = partial(applySobel1, mask)
+      elif(mask_type[-1]=='2'):
+        applyFilter = partial(applySobel2, mask)
     else:
       continue
     print("Calculating for ", mask_type)
     
-    for model_type in ['extra_trees']:
+    for model_type in ['extra_trees', 'svm']:
       if model_type == 'extra_trees':
         model = ExtraTreesClassifier(n_estimators=100, random_state=0)
         X_filtered = (applyFilter(img) for img in X)
