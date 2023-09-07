@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 from datetime import datetime
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import ExtraTreesClassifier, VotingClassifier
 from sklearn.svm import SVC
+from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import pickle
 
@@ -65,7 +65,10 @@ def applyLaplacian(mask, img):
   return finalImg
   
 def applySobel(mask, img):
-  s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
+  if mask == 'soebel1':
+    s1 = cv2.Sobel(img,cv2.CV_64F,1,0,ksize=5)
+  elif mask == 'soebel2':
+    s1 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
   # s2 = cv2.Sobel(img,cv2.CV_64F,0,1,ksize=5)
   return s1
 
@@ -78,13 +81,12 @@ def model_selector(X, y):
       mask = masks[mask_type]
       applyFilter = partial(applyLaplacian, mask)
     elif mask_type in ['soebel1', 'soebel2']:
-      mask = masks[mask_type]
-      applyFilter = partial(applySobel, mask)
+      applyFilter = partial(applySobel, mask_type)
     else:
       continue
     print("Calculating for ", mask_type)
     
-    for model_type in ['extra_trees']:
+    for model_type in ['extra_trees', 'svm', 'xgb']:
       if model_type == 'extra_trees':
         model = ExtraTreesClassifier(n_estimators=100, random_state=0)
         X_filtered = (applyFilter(img) for img in X)
@@ -138,7 +140,26 @@ def model_selector(X, y):
 
 
 
-
+def predict_image_class(img, model):
+  # Preprocess image
+  img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+  img = cv2.resize(img, (128, 128))
+  X=[img]
+  for mask_type in masks:
+    if mask_type in ['laplacian1', 'laplacian2', 'laplacian3', 'laplacian4', 'laplacian5', 'laplacian6']:
+      mask = masks[mask_type]
+      X.append(applyLaplacian(mask, img))
+    elif mask_type in ['soebel1', 'soebel2']:
+      X.append(applySobel(mask_type, img))
+    else:
+      continue
+  X = [img.flatten() for img in X]
+  X = np.array(X)
+  # Predict class
+  pred = model.predict(X)
+  # use the mode of the predictions
+  pred = np.bincount(pred).argmax()
+  return pred
 
 '''Extra Code
 # Path: model.py

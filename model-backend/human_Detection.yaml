@@ -1,0 +1,5 @@
+train: /content/dataset
+val: /content/dataset
+
+nc: 1
+names: ['Human']
