@@ -11,7 +11,7 @@ import Protected from "../layout/protected";
 const styles = {
   padding: 16
 }
-const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff"];
+const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff", ".tif"];
 
 export default function IndexPage() {
   const navigate = useNavigate();
@@ -47,7 +47,26 @@ export default function IndexPage() {
             const buffer = reader.result;
 
             // Set image data
-            const ImageBin = new File([new Uint8Array(buffer)], fileName, { type: fileType });
+            let ImageBin;
+
+            // Convert TIFF to PNG
+            // if (fileExtension === ".tiff" || fileExtension === ".tif") {
+            //   const tiff = new Tiff({ buffer });
+            //   const canvas = tiff.toCanvas();
+            //   const dataURL = canvas.toDataURL("image/png");
+            //   const byteString = atob(dataURL.split(",")[1]);
+            //   const mimeString = dataURL.split(",")[0].split(":")[1].split(";")[0];
+            //   const ab = new ArrayBuffer(byteString.length);
+            //   const ia = new Uint8Array(ab);
+            //   for (let i = 0; i < byteString.length; i++) {
+            //     ia[i] = byteString.charCodeAt(i);
+            //   }
+            //   const blob = new Blob([ab], { type: mimeString });
+            //   ImageBin = new File([blob], fileName, { type: "image/png" });
+            // } else {
+            ImageBin = new File([new Uint8Array(buffer)], fileName, { type: fileType });
+            // }
+
             setImageBin(ImageBin);
             setFilename(file.name);
             setBytessize(file.size);
@@ -84,12 +103,12 @@ export default function IndexPage() {
         } else {
           setError(true);
           setMessage("Uploaded file is not an image. Please upload an image.");
-        }
+        } // if (fileType.startsWith("image/"))
       } else {
         setError(true);
         setMessage("File type not supported. Please upload supported file types only.");
-      }
-    }
+      } // if (allowedFileTypes.includes(fileExtension))
+    } // if (file)
   }
 
   return <Protected>

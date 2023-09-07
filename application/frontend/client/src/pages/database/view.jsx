@@ -12,7 +12,7 @@ import { NotificationContext } from "../../base/contexts/notification";
 import endpoints from "../../base/endpoints.json";
 import Protected from "../../layout/protected";
 
-const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff"];
+const allowedFileTypes = [".jpg", ".jpeg", ".png", ".tiff", ".tif"];
 
 const imageStyles = {
   width: "100%",

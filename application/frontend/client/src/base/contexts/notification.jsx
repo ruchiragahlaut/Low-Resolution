@@ -13,6 +13,7 @@ export default function NotificationContextProvider({ children }) {
   const setMessageTimed = (message) => {
     setMessage(message);
     clearTimeout(timer);
+    if (message === "") return;
     timer = setTimeout(() => {
       setMessage("");
     }, 5000);

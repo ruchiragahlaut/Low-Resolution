@@ -77,6 +77,7 @@ export default function LoginPage() {
     <TextField
       required fullWidth
       label="Username" onChange={handleUsername}
+      autoComplete="username"
       variant="filled" color="info" margin="normal"
     />
 

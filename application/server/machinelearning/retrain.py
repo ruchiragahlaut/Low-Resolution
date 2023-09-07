@@ -184,7 +184,6 @@ def retrain_helper():
     generator = model_selector(X, y)
     try:
       while True:
-        # Add new line to the end of each line
         yield next(generator) + "<br />"
     except StopIteration as e:
         vclf = e.value

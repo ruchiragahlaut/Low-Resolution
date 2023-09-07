@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { Grid, Paper, Button, } from "@mui/material";
-import axios from "axios";
 
 import { NotificationContext } from "../base/contexts/notification";
 import Protected from "../layout/protected";
@@ -13,43 +12,51 @@ const styles = {
 export default function RetrainPage() {
   const { setMessage, setType } = useContext(NotificationContext);
 
-  const [logs, setLogs] = useState("");
+  const [Logs, setLogs] = useState([]);
+  const bottomRef = useRef();
+
+  // Scroll to bottom of logs
+  useEffect(() => {
+    if (Logs.length === 0) return;
+    if (!bottomRef.current) return;
+    bottomRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [Logs]);
 
   function retrain() {
     const URL = endpoints.baseurl + endpoints.ml.retrain;
     setType("info");
     setMessage("Model retraining in progress... Please wait for a few moments.");
-    setLogs("");
+    setLogs([]);
 
     // Make API call to ML endpoint
     // Response is a stream of status logs
-    let stream;
+    // Use FetchAPI because axios doesn't support streaming
+    fetch(URL, { method: "GET", credentials: "include" })
+      .then(res => {
+        const stream = res.body.getReader();
+        const decoder = new TextDecoder();
 
-    axios.get(URL, { withCredentials: true, responseType: "stream" })
-      .then((response) => {
-        stream = response.data;
+        const read = () => {
+          stream.read().then(({ done, value }) => {
+            if (done) {
+              setType("success");
+              setMessage("Model retraining completed.");
+              return;
+            }
 
-        console.debug("Response:", response);
-        console.debug("Stream:", stream);
+            const log = decoder.decode(value)
+              .split("<br />")
+              .filter(log => log !== "");
 
-        // TODO: Why is the stream plain text ?
-        const text = stream.toString();
-        setLogs(text);
-        setType("success");
-        setMessage("Model retraining completed.");
-
-        // stream.on("data", (chunk) => {
-        //   const data = JSON.parse(chunk.toString());
-        //   setLogs((logs) => logs + data.message + "\n");
-        // });
-        // stream.on("end", () => {
-        //   setType("success");
-        //   setMessage("Model retraining completed.");
-        // });
-      }).catch((error) => {
+            setLogs(prevLogs => [...prevLogs, ...log]);
+            read();
+          });
+        }
+        read();
+      })
+      .catch(err => {
         setType("error");
-        setMessage("Model retraining failed.");
-        console.log(error);
+        setMessage("Failed to retrain model.");
       });
   }
 
@@ -68,20 +75,23 @@ export default function RetrainPage() {
 
     </Grid>
 
-    <p
-      style={{
-        padding: 12,
-        margin: 12,
-        width: "80%",
-        backgroundColor: "#eee",
-      }}
-    >
-      Logs
-      <br />
-      {logs.split("<br />")
-        .map((log, i) => <span key={i}>{log}<br /></span>)
-      }
-    </p>
+    {
+      Logs.length > 0 && <Paper
+        style={{
+          padding: 12,
+          margin: 12,
+          width: "80%",
+          backgroundColor: "#eee",
+        }}
+      >
+        {Logs.map((log, index) => <>
+          <span key={index}>{log}</span>
+          <br />
+        </>
+        )}
+        <span ref={bottomRef}></span>
+      </Paper>
+    }
 
   </Protected>
 }
