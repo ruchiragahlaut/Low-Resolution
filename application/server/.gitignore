@@ -6,7 +6,10 @@ migrations/
 # Database
 db.sqlite3
 media/
+
+# Machine Learning
 machinelearning/model.pkl
+backup/
 
 # Python
 venv/

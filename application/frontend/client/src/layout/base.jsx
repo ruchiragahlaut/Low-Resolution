@@ -23,7 +23,8 @@ const mainGridStyles = {
   alignItems: 'center',
   height: "100vh",
   padding: 2,
-  overflow: 'auto'
+  overflow: 'auto',
+  flexGrow: 1,
 };
 
 export default function BaseTemplateLayout({ children }) {
@@ -38,13 +39,17 @@ export default function BaseTemplateLayout({ children }) {
       {Status && <Grid item xs={2} component={Sidebar} />}
 
       {/* 9.9 grid columns because layout breaks at 10 */}
-      <Grid item xs={Status ? 9.9 : "auto"}
+      {/* 10 cols ~= 83.33333% */}
+      <Grid item
         component={Status ? "main" : Paper}
         sx={{
           ...mainGridStyles,
-          ...(Status ? {} : {
+          ...(Status ? {
+            maxWidth: "82%" // Sidebar 2 / 12 cols ~ 20%
+          } : {
             justifyContent: 'center',
             height: 'min-content',
+            flexGrow: "unset"
           })
         }}
       >

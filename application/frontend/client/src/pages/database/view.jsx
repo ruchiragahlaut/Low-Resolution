@@ -1,6 +1,10 @@
 import { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Grid, Box, Paper, TextField, Button } from "@mui/material";
+import {
+  Grid, Box, Paper,
+  TextField, Button,
+  Dialog
+} from "@mui/material";
 import axios from "axios";
 
 import { AuthContext } from "../../base/contexts/auth";
@@ -29,6 +33,10 @@ export default function DatabaseViewPage() {
 
   const [UploadStatus, setUploadStatus] = useState("Drag and drop images here");
 
+  const [dialogState, setDialogState] = useState(false);
+  const [dialogHandler, setDialogHandler] = useState(null);
+  const [dialogObject, setDialogObject] = useState("");
+
   useEffect(() => {
     const URL = endpoints.baseurl + endpoints.database + id + "/";
     axios.get(URL, { withCredentials: true }).then(res => {
@@ -53,8 +61,8 @@ export default function DatabaseViewPage() {
 
     // Drag and drop or input type file
     const files = (e.dataTransfer ?? e.target)?.files;
-    let completed = [];
-    let failed = [];
+    const completed = [];
+    const failed = [];
     const total = files.length;
 
     const config = {
@@ -63,6 +71,7 @@ export default function DatabaseViewPage() {
         "X-CSRFToken": CSRFtoken,
       }
     };
+    const URL = endpoints.baseurl + endpoints.images + "create/";
 
     for (const file of files) {
       if (file) {
@@ -78,13 +87,13 @@ export default function DatabaseViewPage() {
             reader.readAsArrayBuffer(file);
             reader.onload = async () => {
               const binaryImage = reader.result;
-              const URL = endpoints.baseurl + endpoints.images + "create/";
-              const data = new FormData();
-              data.append("image", new Blob([new Uint8Array(binaryImage)], { type: fileType }), fileName);
-              data.append("album", id);
-              data.append("csrfmiddlewaretoken", CSRFtoken);
+              const payload = new FormData();
+              const blob = new Blob([new Uint8Array(binaryImage)], { type: fileType });
+              payload.append("image", blob, fileName);
+              payload.append("album", id);
+              payload.append("csrfmiddlewaretoken", CSRFtoken);
               try {
-                const res = await axios.post(URL, data, config);
+                const res = await axios.post(URL, payload, config);
                 completed.push(file);
                 setUploadStatus(`Uploading ${completed.length} of ${total} images / ${failed.length} failed...`);
                 setImageList(prev => [
@@ -113,6 +122,9 @@ export default function DatabaseViewPage() {
         failed.push(file);
         setUploadStatus(`Uploading ${completed.length} of ${total} images / ${failed.length} failed...`);
       }
+
+      // Add delay to prevent server overload
+      await new Promise(resolve => setTimeout(resolve, 100));
     } // for (const file of files)
   }
 
@@ -133,15 +145,14 @@ export default function DatabaseViewPage() {
     axios.patch(URL, data, config).then(res => {
       setType("info");
       setMessage("Updated successfully");
-      navigate("/database/view/" + res.data.id);
+      // navigate("/database/view/" + res.data.id);
     }).catch(err => {
       setType("error");
       setMessage(`Unable to update. ${err.response?.data ?? err.message}`);
     });
   };
 
-  function handleDelete(e) {
-    e.preventDefault();
+  function handleDelete() {
     const URL = endpoints.baseurl + endpoints.database + id + "/delete/";
     const config = {
       withCredentials: true,
@@ -159,8 +170,7 @@ export default function DatabaseViewPage() {
     });
   }
 
-  function handleImageDelete(e, id) {
-    e.preventDefault();
+  function handleImageDelete(id) {
     const URL = endpoints.baseurl + endpoints.images + id + "/delete/";
     const config = {
       withCredentials: true,
@@ -230,7 +240,12 @@ export default function DatabaseViewPage() {
           </Grid>
 
           <Grid item xs={6} style={{ textAlign: "center" }}>
-            <Button variant="contained" color="error" onClick={handleDelete}>
+            <Button variant="contained" color="error" onClick={(e) => {
+              e.preventDefault();
+              setDialogObject(`object "${Title}"`);
+              setDialogHandler("handleDelete");
+              setDialogState(true);
+            }}>
               Delete object
             </Button>
           </Grid>
@@ -291,7 +306,12 @@ export default function DatabaseViewPage() {
             <br />
             <Button
               variant="contained" color="error"
-              onClick={e => handleImageDelete(e, image.primary_key)}
+              onClick={(e) => {
+                e.preventDefault();
+                setDialogObject("selected image");
+                setDialogHandler(image.primary_key);
+                setDialogState(true);
+              }}
               style={{ position: "absolute", top: 0, right: 0 }}
             >
               X
@@ -300,5 +320,35 @@ export default function DatabaseViewPage() {
         })
       }
     </Grid>
+
+    {/* Delete confirmation dialog */}
+    <Dialog
+      open={dialogState}
+      onClose={() => { }}
+    >
+      <Box component={Paper} padding={2}>
+        <h3>Are you sure you want to delete {dialogObject}?</h3>
+        <Button variant="contained" color="info" onClick={() => setDialogState(false)}>
+          Cancel
+        </Button>
+        <Button
+          variant="contained" color="error"
+          onClick={() => {
+            setDialogState(false);
+            if (dialogHandler === "handleDelete") {
+              handleDelete();
+            } else {
+              handleImageDelete(dialogHandler);
+            }
+          }}
+          style={{
+            marginLeft: 8
+          }}
+        >
+          Delete
+        </Button>
+      </Box>
+    </Dialog>
+
   </Protected >
 };

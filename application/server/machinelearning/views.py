@@ -14,7 +14,7 @@ import cv2
 
 from .retrain import retrain_helper
 
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.forms.models import model_to_dict
 
 from database.models import Album, AlbumImage
@@ -73,8 +73,9 @@ def detect(request):
 
     try:
         probability = MODEL.predict_proba([flattened])[0]
+        probability = np.max(probability) * 100
     except:
-        probability = [0.94 for _ in range(len(MODEL.classes_))]
+        probability = None
 
     # Retrieve additional details
     try:
@@ -85,9 +86,10 @@ def detect(request):
             details["thumbnail"] = thumbnail.image.url
     except:
         details = {}
+    # print(details, probability)
 
     return JsonResponse({
-        "PredProba": str(np.max(probability) * 100), # Convert to percentage
+        "PredProba": probability,
         "Title": details.get("title", "Missing in database"),
         "Country": details.get("country", "Missing in database"),
         "Class_of_album": details.get("class_of_album", "Missing in database"),
@@ -107,12 +109,11 @@ def retrain(request):
     """
     Retrain the model with the new data.
     """
+    global MODEL
+    MODEL = None
     try:
-        retrain_helper()
+        stream = retrain_helper()
+        return StreamingHttpResponse(stream, content_type="text/event-stream")
     except Exception as e:
         print(e)
         return HttpResponse("Error while retraining", status=500)
-    load_pretrained()
-    return HttpResponse("Model sucessfully retrained", status=200)
-
-load_pretrained()

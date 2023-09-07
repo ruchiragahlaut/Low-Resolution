@@ -74,7 +74,8 @@ export default function IndexPage() {
               navigate("/detect");
             }).catch(err => {
               setError(true);
-              setMessage(`${err.response?.data ?? err.message}`);
+              setMessage("Error analysing image. Please try again.");
+              // setMessage(`${err.response?.data ?? err.message}`);
             });
 
             // navigate("/detect");

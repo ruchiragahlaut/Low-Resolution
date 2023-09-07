@@ -11,7 +11,7 @@ import { DetectContext } from "../base/contexts/detect";
 import Protected from "../layout/protected";
 
 const styles = {
-  padding: 12
+  padding: 24
 }
 
 export default function DetectPage() {
@@ -88,7 +88,7 @@ export default function DetectPage() {
 
       <Grid item xs={8}>
         <Alert severity={(PredProba && PredProba > deferredThreshold) ? "success" : "error"} icon={false}>
-          Prediction: {Title} - {PredProba && PredProba.toFixed(2)}% Accuracy
+          Prediction: {Title} {PredProba && `- ${PredProba.toFixed(2)}% Accuracy`}
         </Alert>
       </Grid>
 

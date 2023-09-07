@@ -1,6 +1,6 @@
 {
   "//": "Leave baseurl empty for same server",
-  "//": "or set to http://localhost:8000 for cross-server",
+  "//": "or set to (example: http://localhost:8000) for cross-server",
   "baseurl": "",
   "auth": {
     "session": {

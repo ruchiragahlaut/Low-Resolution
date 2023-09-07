@@ -1,6 +1,7 @@
 from typing import Any, Dict, Tuple
 from django.db import models
 import uuid
+import shutil
 import os
 
 class Album(models.Model):
@@ -11,6 +12,16 @@ class Album(models.Model):
     country = models.CharField(max_length=70)
     class_of_album = models.CharField(max_length=70)
     weapons = models.CharField(max_length=70, blank=True)
+
+    def delete(self, *args, **kwargs):
+      """
+      Delete entire folder for images: AlbumImage is not deleted automatically
+      """
+      try:
+        shutil.rmtree(f'media/{self.id}')
+      except FileNotFoundError:
+        pass # Folder does not exist
+      super().delete(*args, **kwargs)
 
     def __str__(self):
         return self.title
