@@ -5,6 +5,7 @@ npm ci && npm run build
 cd ../../server
 
 # Setup virtual environment
+python -m pip install virtualenv
 python -m virtualenv venv
 source venv/bin/activate
 

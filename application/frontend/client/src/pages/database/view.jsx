@@ -56,6 +56,10 @@ export default function DatabaseViewPage() {
     });
   }, [id, setType, setMessage]);
 
+  async function sleep(ms) {
+    return await new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   const handleFileChange = async (e) => {
     e.preventDefault();
 
@@ -74,6 +78,7 @@ export default function DatabaseViewPage() {
     const URL = endpoints.baseurl + endpoints.images + "create/";
 
     for (const file of files) {
+      await sleep(100);
       if (file) {
         const fileType = file.type;
         const fileName = file.name;

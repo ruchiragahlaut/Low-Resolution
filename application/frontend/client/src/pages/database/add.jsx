@@ -74,10 +74,21 @@ export default function DatabaseAddPage() {
           />
         </Grid>
 
-        <Grid item xs={12} style={{ textAlign: "center" }}>
-          <Button variant="contained" color="secondary" type="submit">
-            Submit
-          </Button>
+        <Grid item xs={12} container gap={1}>
+          <Grid item xs={5}>
+            <Button
+              color="warning"
+              variant="contained"
+              onClick={() => navigate("/database")}
+            >
+              Cancel
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <Button variant="contained" color="secondary" type="submit">
+              Submit
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
     </Box>

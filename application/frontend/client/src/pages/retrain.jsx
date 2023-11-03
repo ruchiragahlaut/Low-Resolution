@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { Grid, Paper, Button, } from "@mui/material";
+import { Grid, Paper, Button, LinearProgress } from "@mui/material";
 
 import { NotificationContext } from "../base/contexts/notification";
 import Protected from "../layout/protected";
@@ -24,8 +24,10 @@ export default function RetrainPage() {
 
   function retrain() {
     const URL = endpoints.baseurl + endpoints.ml.retrain;
+
     setType("info");
     setMessage("Model retraining in progress... Please wait for a few moments.");
+
     setLogs([]);
 
     // Make API call to ML endpoint
@@ -75,13 +77,27 @@ export default function RetrainPage() {
 
     </Grid>
 
-    {
-      Logs.length > 0 && <Paper
+    {Logs.length > 0 && <>
+      <LinearProgress
+        variant="determinate" color="secondary"
+        // 8 masks * (1 * 2 models) + (3 + 5 top models)
+        value={Logs.length * 100 / 32}
+        style={{
+          height: 12,
+          width: "80%",
+          margin: 12,
+          backgroundColor: "black",
+        }}
+      />
+
+      <Paper
         style={{
           padding: 12,
           margin: 12,
           width: "80%",
           backgroundColor: "#eee",
+          maxHeight: 300,
+          overflowY: "auto",
         }}
       >
         {Logs.map((log, index) => <>
@@ -91,7 +107,7 @@ export default function RetrainPage() {
         )}
         <span ref={bottomRef}></span>
       </Paper>
-    }
+    </>}
 
   </Protected>
 }

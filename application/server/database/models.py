@@ -34,7 +34,8 @@ class AlbumImage(models.Model):
         """
         Save image to media/album_id/image_id.jpg
         """
-        return f'{self.album.id}/{uuid.uuid4()}.jpg'
+        name, extension = filename.split('.')
+        return f'{self.album.id}/{name}-{uuid.uuid4()}.{extension}'
 
     def delete(self, *args, **kwargs):
         """

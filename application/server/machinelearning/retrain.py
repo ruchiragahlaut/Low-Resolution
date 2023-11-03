@@ -23,7 +23,6 @@ masks = {
     'soebel2': np.array([[1, 2, 1], [0, 0, 0], [-1, -2, -1]]),
 }
 
-
 def train_model( X, y, model):
         # Split data into training and testing sets
         X_train, X_test, y_train, y_test = train_test_split(list(X), y, test_size=0.3, random_state=0, stratify=y)
@@ -71,8 +70,9 @@ def model_selector(X, y):
             applyFilter = partial(applySobel, mask_type)
         else:
             continue
+
         print("Calculating for ", mask_type)
-        yield f"Calculating for {mask_type}"
+        yield f"[INFO] Calculating for {mask_type}"
         
         for model_type in ['extra_trees', 'svm']:
             if model_type == 'extra_trees':
@@ -82,8 +82,9 @@ def model_selector(X, y):
                 X_scaled = (img.flatten() for img in X_resized)
                 # X_scaled = StandardScaler().fit_transform(X_processed)
                 accuracy, report, matrix = train_model(X_scaled, y, model)
+
                 print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
-                yield f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}"
+                yield f"[INFO] Model {mask_type} {model_type} trained and gave accuracy {accuracy}"
 
                 accuracies.append(accuracy)
                 models.append(model)
@@ -94,8 +95,9 @@ def model_selector(X, y):
                 X_scaled = (img.flatten() for img in X_resized)
                 # X_scaled = StandardScaler().fit_transform(X_processed)
                 accuracy, report, matrix = train_model(X_scaled, y, model)
+
                 print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
-                yield f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}"
+                yield f"[INFO] Model {mask_type} {model_type} trained and gave accuracy {accuracy}"
 
                 accuracies.append(accuracy)
                 models.append(model)
@@ -106,21 +108,24 @@ def model_selector(X, y):
                 X_scaled = (img.flatten() for img in X_resized)
                 # X_scaled = StandardScaler().fit_transform(X_processed)
                 accuracy, report, matrix = train_model(X_scaled, y, model)
+
                 print(f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}")
-                yield f"Model {mask_type} {model_type} trained and gave accuracy {accuracy}"
+                yield f"[INFO] Model {mask_type} {model_type} trained and gave accuracy {accuracy}"
 
                 accuracies.append(accuracy)
                 models.append(model)
             
 
     # Choose top 5 models based on accuracy
+
     print("Choosing top 5 models based on accuracy")
-    yield "Choosing top 5 models based on accuracy"
+    yield "[INFO] Choosing top 5 models based on accuracy"
 
     # top_models = [model for _, model in sorted(zip(accuracies, models), reverse=True)[:5]]
     top_models = [model for model, acc in sorted(zip(models, accuracies), key=lambda x: x[1], reverse=True)][:5]
-    print(top_models)
-    yield str(top_models)
+    for i, model in enumerate(top_models):
+        print(f"{i + 1} {model}")
+        yield f"[INFO] {i + 1} {model}"
 
     # Soft voting for probability
     voting_clf = VotingClassifier([(str(i), model) for i, model in enumerate(top_models)], voting='soft')
@@ -168,6 +173,7 @@ def retrain_helper():
     y    = []
 
     PATH = 'media/' # Path relative to manage.py
+    yield f"[INFO] Preparing dataset ..." + "<br />"
 
     for idx, imgclass in enumerate(os.listdir(PATH)):
         for img in os.listdir(PATH+imgclass):
@@ -180,6 +186,7 @@ def retrain_helper():
     y = np.array(y)
 
     print(X.shape, y.shape)
+    yield f"[INFO] Dataset generated: X:{X.shape} Y:{y.shape}" + "<br />"
 
     generator = model_selector(X, y)
     try:

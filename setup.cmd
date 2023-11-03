@@ -5,6 +5,7 @@ CALL npm ci && CALL npm run build
 cd ../../server
 
 @REM # Setup virtual environment
+python -m pip install virtualenv
 python -m virtualenv venv
 CALL venv\Scripts\activate
 
